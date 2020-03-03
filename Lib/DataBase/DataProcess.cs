@@ -27,50 +27,69 @@ namespace Lib.DataBase
 
         public DataTable Process(DataTable dataTable) 
         {
+            DataTable result = dataTable.Clone();
+            DataRow newRow = result.NewRow();
+            //TODO: 确保时间对表重新进行排序
             foreach (DataColumn column in dataTable.Columns) 
             {
-                switch (_processPattern) 
+                if (configuration.AppSettings.Settings[column.ColumnName].Value == "T")
                 {
-                    case ProcessPattern.Max:
-                        break;
-                    case ProcessPattern.Min:
-                        break;
-                    case ProcessPattern.Average:
-                        break;
+                    newRow[column.ColumnName] = dataTable.Rows[0][column.ColumnName];
                 }
-
-                if (configuration.AppSettings.Settings[column.ColumnName].Value == "T") 
+                else 
                 {
-
+                    switch (_processPattern)
+                    {
+                        case ProcessPattern.Max:
+                            newRow[column.ColumnName] = MaxProcess(column);
+                            break;
+                        case ProcessPattern.Min:
+                            newRow[column.ColumnName] = MinProcess(column);
+                            break;
+                        case ProcessPattern.Average:
+                            newRow[column.ColumnName] = AverageProcess(column);
+                            break;
+                    }
                 }
             }
+            result.Rows.Add(newRow);
             return new DataTable();
         }
 
 
-        private float MaxProcess(DataColumn column) 
+        private decimal MaxProcess(DataColumn column) 
         {
-            float MaxValue = MaxValue = (float)column.Table.Rows[0][column.ColumnName];
+            decimal MaxValue = MaxValue = Convert.ToDecimal(column.Table.Rows[0][column.ColumnName]);
             for (int i = 1; i < column.Table.Rows.Count; i++)
             {
-                if (MaxValue < (float)column.Table.Rows[i][column.ColumnName])
+                if (MaxValue < Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]))
                 {
-                    MaxValue = (float)column.Table.Rows[i][column.ColumnName];
+                    MaxValue = Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]);
                 }
             }
             return MaxValue;
         }
-        private float MinProcess(DataColumn column)
+        private decimal MinProcess(DataColumn column)
         {
-            float MinValue = MinValue = (float)column.Table.Rows[0][column.ColumnName];
+            decimal MinValue = MinValue = Convert.ToDecimal(column.Table.Rows[0][column.ColumnName]);
             for (int i = 1; i < column.Table.Rows.Count; i++) 
             {
-                if (MinValue > (float)column.Table.Rows[i][column.ColumnName])
+                if (MinValue > Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]))
                 {
-                    MinValue = (float)column.Table.Rows[i][column.ColumnName];
+                    MinValue = Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]);
                 }
             }
             return MinValue;
+        }
+
+        private decimal AverageProcess(DataColumn column) 
+        {
+            decimal sum = 0;
+            for (int i = 0; i < column.Table.Rows.Count; i++) 
+            {
+                sum = sum + Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]);
+            }
+            return Math.Round(sum / (column.Table.Rows.Count), 2);
         }
 
     }

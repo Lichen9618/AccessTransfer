@@ -66,6 +66,8 @@
     <Compile Include="DataBase\DataProcess.cs" />
     <Compile Include="DataBase\Model\DataType.cs" />
     <Compile Include="DataBase\Model\ProcessPattern.cs" />
+    <Compile Include="DataTransfer\Client.cs" />
+    <Compile Include="DataTransfer\Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -82,7 +84,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataTransfer\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
