@@ -14,8 +14,9 @@ namespace Lib.DataBase.Tests
         public void AccessConnectionTest()
         {
             AccessConnection connection = new AccessConnection();
-            connection.SetConnection(@"D:\project\cui\2019-12-15D(1).MDB");
+            connection.SetConnection(@"D:\project\cui\2019-12-15D.MDB");
             connection.OpenConnection();
+
             Assert.Fail();
         }
     }

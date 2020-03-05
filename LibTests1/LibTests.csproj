@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="DataBase\AccessConnectionTests.cs" />
     <Compile Include="DataBase\DataProcessTests.cs" />
+    <Compile Include="DataTransfer\ServerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

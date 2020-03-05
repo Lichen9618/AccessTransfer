@@ -9,11 +9,22 @@ using System.Threading;
 
 namespace Lib.DataTransfer
 {
-    class Server
+    public class Server
     {
+        string message;
+        public bool connect = false;
+        public bool receiveMessage = false;
         Socket serverSock;
         List<Socket> clientList = new List<Socket>();
 
+        public void SetConnect() 
+        {
+            connect = !connect;
+        }
+        public void SetReceiveMessage() 
+        {
+            receiveMessage = !receiveMessage;
+        }
         public Server(string ip, int port)
         {
             //IPv4的地址模式. 流式数据传输
@@ -31,29 +42,36 @@ namespace Lib.DataTransfer
 
         public void AcceptClient() 
         {
-            while (true) 
+            while (connect) 
             {
                 Socket client = serverSock.Accept();
                 IPEndPoint endPoint = client.RemoteEndPoint as IPEndPoint;
                 clientList.Add(client);
                 Thread tempClient = new Thread(ReceiveMessage);
                 tempClient.Start(client);
+                Console.WriteLine("客户端连接,当前数量为 {0}", clientList.Count);
             }
         }
 
         public void ReceiveMessage(object Message) 
         {
-            while (true) 
+            while (receiveMessage) 
             {
                 Socket client = Message as Socket;
-                byte[] messageBytes = new byte[100 * 1024];
+                byte[] messageBytes = new byte[100];
                 try
                 {
                     int num = client.Receive(messageBytes);
+                    if (num != 0) 
+                    {
+                        message = Encoding.UTF8.GetString(messageBytes);
+                    }
+                    
                     IPEndPoint clientPoint = client.RemoteEndPoint as IPEndPoint;
                     //对messageBytes进行进一步处理
+                    
                 }
-                catch (Exception e) 
+                catch
                 {
                     clientList.Remove(client);
                     break;
@@ -61,11 +79,17 @@ namespace Lib.DataTransfer
             }
         }
 
+        public string ShowMessage() 
+        {
+            string result = message;
+            message = "";
+            return result;
+        }
+
         public void Start() 
         {
             Thread thread = new Thread(AcceptClient);
             thread.Start();
-
         }
     }
 }

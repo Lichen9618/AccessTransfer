@@ -10,10 +10,12 @@ using System.Threading;
 
 namespace Lib.DataTransfer
 {
-    class Client
+    public class Client
     {
+        public bool StartToSend = false;
         Socket clientSock;
-        public Client(string ip, int port) 
+        Thread thread; 
+        public Client(string ip, int port)
         {
             clientSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
@@ -24,45 +26,40 @@ namespace Lib.DataTransfer
             catch (Exception)
             {
                 throw new Exception("IP地址配置错误");
-            }        
+            }
+        }
+
+        public void SetSend() 
+        {
+            StartToSend = !StartToSend;
         }
 
         public void Start() 
         {
-            Thread thread = new Thread(SendMessage);
+            thread = new Thread(SendMessage);
             thread.Start();
-            ReceiveMessage();
+            //ReceiveMessage();
+        }
+
+        public void End() 
+        {
+            thread.Abort();
         }
 
         public void SendMessage() 
         {
             try
             {
-                while (true)
+                while (StartToSend)
                 {
-                    clientSock.Send(Encoding.Default.GetBytes("TestMessage"));
+                    Console.WriteLine("客户端发送消息:");
+                    clientSock.Send(Encoding.UTF8.GetBytes("Message from client"));
+                    System.Threading.Thread.Sleep(1000);
                 }
             }
             catch (Exception) 
             {
                 throw new Exception("连接已断开");
-            }
-        }
-
-        public void ReceiveMessage() 
-        {
-            try
-            {
-                while (true)
-                {
-                    byte[] messageBytes = new byte[100 * 1024];
-                    int num = clientSock.Receive(messageBytes);
-
-                }
-            }
-            catch (Exception) 
-            {
-                throw new Exception("服务器断开");
             }
         }
     }
