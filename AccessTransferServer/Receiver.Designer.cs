@@ -36,9 +36,9 @@ namespace AccessTransferServer
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(238, 212);
+            this.button1.Location = new System.Drawing.Point(218, 256);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(129, 23);
+            this.button1.Size = new System.Drawing.Size(129, 36);
             this.button1.TabIndex = 0;
             this.button1.Text = "启动/停止接受";
             this.button1.UseVisualStyleBackColor = true;
@@ -48,7 +48,7 @@ namespace AccessTransferServer
             // 
             this.richTextBox.Location = new System.Drawing.Point(17, 14);
             this.richTextBox.Name = "richTextBox";
-            this.richTextBox.Size = new System.Drawing.Size(545, 170);
+            this.richTextBox.Size = new System.Drawing.Size(533, 217);
             this.richTextBox.TabIndex = 1;
             this.richTextBox.Text = "";
             // 
@@ -62,8 +62,6 @@ namespace AccessTransferServer
             this.Name = "Receiver";
             this.Text = "Form1";
             this.ResumeLayout(false);
-
-            Control.CheckForIllegalCrossThreadCalls = false;
 
         }
 

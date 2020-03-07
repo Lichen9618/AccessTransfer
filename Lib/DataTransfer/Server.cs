@@ -9,7 +9,8 @@ namespace Lib.DataTransfer
 {
     public class Server
     {
-        string message;
+        string TransferMessage;
+        string ConnectionMessage;
         public bool connect = false;
         public bool receiveMessage = false;
         Socket serverSock;
@@ -47,7 +48,7 @@ namespace Lib.DataTransfer
                 clientList.Add(client);
                 Thread tempClient = new Thread(ReceiveMessage);
                 tempClient.Start(client);
-                Console.WriteLine("客户端连接,当前数量为 {0}", clientList.Count);
+                ConnectionMessage = ("连接客户端" + endPoint.Address.ToString());
             }
         }
 
@@ -62,9 +63,8 @@ namespace Lib.DataTransfer
                     int num = client.Receive(messageBytes);
                     if (num != 0) 
                     {
-                        message = Encoding.UTF8.GetString(messageBytes);
-                    }
-                    
+                        TransferMessage = Encoding.UTF8.GetString(messageBytes);
+                    }                   
                     IPEndPoint clientPoint = client.RemoteEndPoint as IPEndPoint;
                     //对messageBytes进行进一步处理
                     
@@ -77,10 +77,22 @@ namespace Lib.DataTransfer
             }
         }
 
+        public void End() 
+        {
+            Environment.Exit(0);
+        }
+
         public string ShowMessage() 
         {
-            string result = message;
-            message = "";
+            string result = TransferMessage;
+            TransferMessage = "";
+            return result;
+        }
+
+        public string ShowConnectionMessage() 
+        {
+            string result = ConnectionMessage;
+            ConnectionMessage = "";
             return result;
         }
 

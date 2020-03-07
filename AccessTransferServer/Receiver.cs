@@ -18,9 +18,11 @@ namespace AccessTransferServer
             server = new Server("127.0.0.1", 8888);
             var timer = new System.Timers.Timer();
             InitializeComponent();
+            Control.CheckForIllegalCrossThreadCalls = false;
+            this.FormClosing += new FormClosingEventHandler(this.Close);
 
             timer.Enabled = true;
-            timer.Interval = 1000;
+            timer.Interval = 500;
             timer.Start();
             timer.Elapsed += new System.Timers.ElapsedEventHandler(FreshMessage);
         }
@@ -49,6 +51,19 @@ namespace AccessTransferServer
             }
         }
 
+        private void Close(object sender, FormClosingEventArgs e)
+        {
+            DialogResult dr = MessageBox.Show("是否退出?", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+            if (dr == DialogResult.OK)
+            {
+                server.End();
+                e.Cancel = false;
+            }
+            else if (dr == DialogResult.Cancel)
+            {
+                e.Cancel = true;
+            }
+        }
 
     }
 }

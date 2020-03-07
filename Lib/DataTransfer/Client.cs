@@ -41,7 +41,7 @@ namespace Lib.DataTransfer
 
         public void End() 
         {
-            thread.Abort();
+            Environment.Exit(0);
         }
 
         public void SendMessage() 

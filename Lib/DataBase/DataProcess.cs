@@ -58,7 +58,8 @@ namespace Lib.DataBase
 
         private decimal MaxProcess(DataColumn column) 
         {
-            decimal MaxValue = MaxValue = Convert.ToDecimal(column.Table.Rows[0][column.ColumnName]);
+            decimal MaxValue;
+            MaxValue = Convert.ToDecimal(column.Table.Rows[0][column.ColumnName]);
             for (int i = 1; i < column.Table.Rows.Count; i++)
             {
                 if (MaxValue < Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]))
@@ -70,7 +71,8 @@ namespace Lib.DataBase
         }
         private decimal MinProcess(DataColumn column)
         {
-            decimal MinValue = MinValue = Convert.ToDecimal(column.Table.Rows[0][column.ColumnName]);
+            decimal MinValue;
+            MinValue = Convert.ToDecimal(column.Table.Rows[0][column.ColumnName]);
             for (int i = 1; i < column.Table.Rows.Count; i++) 
             {
                 if (MinValue > Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]))
@@ -86,7 +88,7 @@ namespace Lib.DataBase
             decimal sum = 0;
             for (int i = 0; i < column.Table.Rows.Count; i++) 
             {
-                sum = sum + Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]);
+                sum += Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]);
             }
             return Math.Round(sum / (column.Table.Rows.Count), 2);
         }
