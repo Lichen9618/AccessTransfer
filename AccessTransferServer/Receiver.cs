@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using Lib.DataTransfer;
+using System;
 using System.Timers;
 using System.Windows.Forms;
-using Lib.DataTransfer;
 
 namespace AccessTransferServer
 {
@@ -15,7 +10,7 @@ namespace AccessTransferServer
         public Server server;
         public Receiver()
         {
-            server = new Server("127.0.0.1", 8888);
+            server = new Server();
             var timer = new System.Timers.Timer();
             InitializeComponent();
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -36,16 +31,16 @@ namespace AccessTransferServer
                 richTextBox.AppendText("开始监听:" + "\r\n");
                 server.Start();
             }
-            else 
+            else
             {
                 richTextBox.AppendText("结束监听:" + "\r\n");
             }
         }
 
-        private void FreshMessage(object source, ElapsedEventArgs e) 
+        private void FreshMessage(object source, ElapsedEventArgs e)
         {
             string text = server.ShowMessage();
-            if (text != "") 
+            if (text != "")
             {
                 richTextBox.AppendText("\r\n" + text);
             }

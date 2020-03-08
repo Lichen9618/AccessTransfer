@@ -1,34 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using Lib.DataBase;
 using Lib.DataTransfer;
+using System;
+using System.Windows.Forms;
 
 namespace AccessTransferClient
 {
     public partial class Sender : Form
     {
         private Client client;
+        private AccessConnection accessConnection;
         public Sender()
         {
-            this.client = new Client("127.0.0.1", 8888);
             InitializeComponent();
-
+            try
+            {
+                this.client = new Client();
+                labelServerConnected.Text = "是";
+            }
+            catch (Exception e)
+            {
+                labelServerConnected.Text = "否";
+            }
+            accessConnection = new AccessConnection(System.Windows.Forms.Application.ExecutablePath);
+            SetDataBaseConnectionLabel(accessConnection.OpenConnection());
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             client.SetSend();
-            if (client.StartToSend == true) 
+            if (client.StartToSend == true)
             {
+                client.SetDataPickInterval(int.Parse(textBoxInterval.Text));
                 client.Start();
-            }                       
+                textBoxInterval.Enabled = false;
+            }
+            textBoxInterval.Enabled = true;
         }
 
-        private void Close(object sender, FormClosingEventArgs e) 
+        private void Close(object sender, FormClosingEventArgs e)
         {
             DialogResult dr = MessageBox.Show("是否退出?", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (dr == DialogResult.OK)
@@ -36,9 +45,33 @@ namespace AccessTransferClient
                 client.End();
                 e.Cancel = false;
             }
-            else if(dr == DialogResult.Cancel) 
+            else if (dr == DialogResult.Cancel)
             {
                 e.Cancel = true;
+            }
+        }
+
+        private void buttonDataBaseChoose_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog AccessMDB = new OpenFileDialog();
+            AccessMDB.ShowDialog();
+            var path = AccessMDB.FileName;
+            if (!accessConnection.SetConnection(path))
+            {
+                MessageBox.Show("数据库路径设置失败");
+            }
+            SetDataBaseConnectionLabel(accessConnection.OpenConnection());
+        }
+
+        private void SetDataBaseConnectionLabel(bool IsConntected) 
+        {
+            if (IsConntected)
+            {
+                labelDataBaseConnected.Text = "是";
+            }
+            else 
+            {
+                labelDataBaseConnected.Text = "否";
             }
         }
     }

@@ -52,6 +52,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net20\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -62,6 +65,7 @@
     <Compile Include="DataBase\DataProcess.cs" />
     <Compile Include="DataBase\Model\DataType.cs" />
     <Compile Include="DataBase\Model\ProcessPattern.cs" />
+    <Compile Include="DataBase\utils\ISerializable.cs" />
     <Compile Include="DataTransfer\Client.cs" />
     <Compile Include="DataTransfer\Server.cs" />
   </ItemGroup>
@@ -85,6 +89,7 @@
   <ItemGroup>
     <None Include="Config\App.exe.config" />
     <Content Include="Config\App.exe" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

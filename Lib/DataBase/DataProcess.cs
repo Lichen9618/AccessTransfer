@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using Lib.DataBase.Model;
+﻿using Lib.DataBase.Model;
+using System;
 using System.Configuration;
+using System.Data;
 
 namespace Lib.DataBase
 {
@@ -13,29 +11,29 @@ namespace Lib.DataBase
         private Configuration configuration;
         public DataTable Table;
 
-        public DataProcess(string path) 
+        public DataProcess(string path)
         {
             path = "D:\\project\\cui\\code\\AccessTransfer\\Lib\\Config\\App.exe";
             configuration = ConfigurationManager.OpenExeConfiguration(path);
         }
 
-        public void SetProcessPattern(ProcessPattern pattern) 
+        public void SetProcessPattern(ProcessPattern pattern)
         {
             _processPattern = pattern;
         }
 
-        public DataTable Process(DataTable dataTable) 
+        public DataTable Process(DataTable dataTable)
         {
             DataTable result = dataTable.Clone();
             DataRow newRow = result.NewRow();
             //TODO: 确保时间对表重新进行排序
-            foreach (DataColumn column in dataTable.Columns) 
+            foreach (DataColumn column in dataTable.Columns)
             {
                 if (configuration.AppSettings.Settings[column.ColumnName].Value == "T")
                 {
                     newRow[column.ColumnName] = dataTable.Rows[0][column.ColumnName];
                 }
-                else 
+                else
                 {
                     switch (_processPattern)
                     {
@@ -52,11 +50,13 @@ namespace Lib.DataBase
                 }
             }
             result.Rows.Add(newRow);
-            return new DataTable();
+            return result;
         }
 
 
-        private decimal MaxProcess(DataColumn column) 
+
+
+        private decimal MaxProcess(DataColumn column)
         {
             decimal MaxValue;
             MaxValue = Convert.ToDecimal(column.Table.Rows[0][column.ColumnName]);
@@ -73,7 +73,7 @@ namespace Lib.DataBase
         {
             decimal MinValue;
             MinValue = Convert.ToDecimal(column.Table.Rows[0][column.ColumnName]);
-            for (int i = 1; i < column.Table.Rows.Count; i++) 
+            for (int i = 1; i < column.Table.Rows.Count; i++)
             {
                 if (MinValue > Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]))
                 {
@@ -83,10 +83,10 @@ namespace Lib.DataBase
             return MinValue;
         }
 
-        private decimal AverageProcess(DataColumn column) 
+        private decimal AverageProcess(DataColumn column)
         {
             decimal sum = 0;
-            for (int i = 0; i < column.Table.Rows.Count; i++) 
+            for (int i = 0; i < column.Table.Rows.Count; i++)
             {
                 sum += Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]);
             }
