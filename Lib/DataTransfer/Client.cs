@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lib.DataBase;
+using Lib.DataBase.Model;
+using System;
 using System.Configuration;
 using System.Net;
 using System.Net.Sockets;
@@ -15,6 +17,9 @@ namespace Lib.DataTransfer
         private int _interval;
         private string _clientName;
 
+        public ProcessPattern processPattern;
+        public AccessConnection accessConnection;
+        public DataProcess dataProcess;
         public bool StartToSend = false;
         Socket clientSock;
         Thread thread;
@@ -38,8 +43,14 @@ namespace Lib.DataTransfer
             }
             catch (Exception)
             {
-                throw new Exception("Socket连接错误");
+                throw new Exception("服务端已断开");
             }
+        }
+
+        public bool SetAcceesConnection(AccessConnection connection) 
+        {
+            this.accessConnection = connection;
+            return true;
         }
 
         public void SetSend()
@@ -49,6 +60,7 @@ namespace Lib.DataTransfer
 
         public void Start()
         {
+            dataProcess = new DataProcess(processPattern);
             thread = new Thread(SendMessage);
             thread.Start();
             //ReceiveMessage();
@@ -61,20 +73,48 @@ namespace Lib.DataTransfer
 
         public void SendMessage()
         {
+            if (accessConnection.IsConnected)
+            {
+                try
+                {
+                    while (StartToSend)
+                    {
+                        //开始写dataprocess返回处理好的数据, 并在dataprocess中, 加入序列化的部分
+                        string message = "Message from client: " + _clientName;
+                        clientSock.Send(Encoding.UTF8.GetBytes(message));
+                        System.Threading.Thread.Sleep(_interval * 1000);
+                    }
+                }
+                catch (Exception)
+                {
+                    throw new Exception("连接已断开");
+                }
+            }
+            else 
+            {
+                throw new Exception("数据库连接断开");
+            }
+
+        }
+
+        public void SendTestMessage() 
+        {
             try
             {
-                while (StartToSend)
+                while (StartToSend) 
                 {
                     string message = "Message from client: " + _clientName;
                     clientSock.Send(Encoding.UTF8.GetBytes(message));
                     System.Threading.Thread.Sleep(_interval * 1000);
                 }
             }
-            catch (Exception)
+            catch
             {
                 throw new Exception("连接已断开");
             }
         }
+
+
 
         public bool SetDataPickInterval(int interval = 3)
         {

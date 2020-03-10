@@ -7,7 +7,6 @@ namespace Lib.DataBase
 {
     public class AccessConnection
     {
-        private string _configPath;
         private string _dataBasePath;
         private static string _providerName = "Microsoft.Jet.OLEDB.4.0";
         private string connectionName = "AccessMDBPath";
@@ -30,9 +29,8 @@ namespace Lib.DataBase
                 if (configuration.ConnectionStrings.ConnectionStrings[connectionName] != null)
                 {
                     _dataBasePath = SetDataBasePath
-                                            (configuration.ConnectionStrings.ConnectionStrings[connectionName].ProviderName,
-                                                configuration.ConnectionStrings.ConnectionStrings[connectionName].ConnectionString
-                                            );
+                        (configuration.ConnectionStrings.ConnectionStrings[connectionName].ProviderName,
+                        configuration.ConnectionStrings.ConnectionStrings[connectionName].ConnectionString);
                 }
 
             }

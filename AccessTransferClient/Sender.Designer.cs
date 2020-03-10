@@ -41,29 +41,30 @@ namespace AccessTransferClient
             this.label = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.labelServerConnected = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.labelDataBaseConnected = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.labelServerConnected = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.buttonConnectToServer = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(384, 153);
+            this.buttonStart.Location = new System.Drawing.Point(372, 107);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(147, 23);
+            this.buttonStart.Size = new System.Drawing.Size(159, 42);
             this.buttonStart.TabIndex = 0;
             this.buttonStart.Text = "启动/停止发送";
             this.buttonStart.UseVisualStyleBackColor = true;
-            this.buttonStart.Click += new System.EventHandler(this.button1_Click);
+            this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
             // 
             // buttonDataBaseChoose
             // 
-            this.buttonDataBaseChoose.Location = new System.Drawing.Point(97, 41);
+            this.buttonDataBaseChoose.Location = new System.Drawing.Point(83, 32);
             this.buttonDataBaseChoose.Name = "buttonDataBaseChoose";
-            this.buttonDataBaseChoose.Size = new System.Drawing.Size(137, 23);
+            this.buttonDataBaseChoose.Size = new System.Drawing.Size(151, 32);
             this.buttonDataBaseChoose.TabIndex = 1;
             this.buttonDataBaseChoose.Text = "数据库文件选择";
             this.buttonDataBaseChoose.UseVisualStyleBackColor = true;
@@ -84,30 +85,29 @@ namespace AccessTransferClient
             // u
             // 
             this.u.AutoSize = true;
-            this.u.Location = new System.Drawing.Point(63, 115);
+            this.u.Location = new System.Drawing.Point(24, 91);
             this.u.Name = "u";
             this.u.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.u.Size = new System.Drawing.Size(73, 19);
             this.u.TabIndex = 2;
-            this.u.TabStop = true;
             this.u.Text = "平均值";
             this.u.UseVisualStyleBackColor = true;
             // 
             // radioButtonMaxValue
             // 
             this.radioButtonMaxValue.AutoSize = true;
-            this.radioButtonMaxValue.Location = new System.Drawing.Point(63, 79);
+            this.radioButtonMaxValue.Location = new System.Drawing.Point(24, 66);
             this.radioButtonMaxValue.Name = "radioButtonMaxValue";
             this.radioButtonMaxValue.Size = new System.Drawing.Size(73, 19);
             this.radioButtonMaxValue.TabIndex = 1;
-            this.radioButtonMaxValue.TabStop = true;
             this.radioButtonMaxValue.Text = "最大值";
             this.radioButtonMaxValue.UseVisualStyleBackColor = true;
             // 
             // radioButtonMinValue
             // 
             this.radioButtonMinValue.AutoSize = true;
-            this.radioButtonMinValue.Location = new System.Drawing.Point(63, 39);
+            this.radioButtonMinValue.Checked = true;
+            this.radioButtonMinValue.Location = new System.Drawing.Point(24, 41);
             this.radioButtonMinValue.Name = "radioButtonMinValue";
             this.radioButtonMinValue.Size = new System.Drawing.Size(73, 19);
             this.radioButtonMinValue.TabIndex = 0;
@@ -153,23 +153,14 @@ namespace AccessTransferClient
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "连接状态";
             // 
-            // label2
+            // labelDataBaseConnected
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(26, 40);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(105, 15);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "是否接服务端:";
-            // 
-            // labelServerConnected
-            // 
-            this.labelServerConnected.AutoSize = true;
-            this.labelServerConnected.Location = new System.Drawing.Point(151, 40);
-            this.labelServerConnected.Name = "labelServerConnected";
-            this.labelServerConnected.Size = new System.Drawing.Size(55, 15);
-            this.labelServerConnected.TabIndex = 1;
-            this.labelServerConnected.Text = "label3";
+            this.labelDataBaseConnected.AutoSize = true;
+            this.labelDataBaseConnected.Location = new System.Drawing.Point(151, 97);
+            this.labelDataBaseConnected.Name = "labelDataBaseConnected";
+            this.labelDataBaseConnected.Size = new System.Drawing.Size(55, 15);
+            this.labelDataBaseConnected.TabIndex = 3;
+            this.labelDataBaseConnected.Text = "label4";
             // 
             // label3
             // 
@@ -180,20 +171,40 @@ namespace AccessTransferClient
             this.label3.TabIndex = 2;
             this.label3.Text = "是否连接数据库:";
             // 
-            // labelDataBaseConnected
+            // labelServerConnected
             // 
-            this.labelDataBaseConnected.AutoSize = true;
-            this.labelDataBaseConnected.Location = new System.Drawing.Point(151, 97);
-            this.labelDataBaseConnected.Name = "labelDataBaseConnected";
-            this.labelDataBaseConnected.Size = new System.Drawing.Size(55, 15);
-            this.labelDataBaseConnected.TabIndex = 3;
-            this.labelDataBaseConnected.Text = "label4";
+            this.labelServerConnected.AutoSize = true;
+            this.labelServerConnected.Location = new System.Drawing.Point(151, 40);
+            this.labelServerConnected.Name = "labelServerConnected";
+            this.labelServerConnected.Size = new System.Drawing.Size(55, 15);
+            this.labelServerConnected.TabIndex = 1;
+            this.labelServerConnected.Text = "label3";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(26, 40);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(105, 15);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "是否接服务端:";
+            // 
+            // buttonConnectToServer
+            // 
+            this.buttonConnectToServer.Location = new System.Drawing.Point(372, 178);
+            this.buttonConnectToServer.Name = "buttonConnectToServer";
+            this.buttonConnectToServer.Size = new System.Drawing.Size(159, 37);
+            this.buttonConnectToServer.TabIndex = 7;
+            this.buttonConnectToServer.Text = "连接服务端";
+            this.buttonConnectToServer.UseVisualStyleBackColor = true;
+            this.buttonConnectToServer.Click += new System.EventHandler(this.buttonConnectToServer_Click);
             // 
             // Sender
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 441);
+            this.Controls.Add(this.buttonConnectToServer);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label);
@@ -230,6 +241,7 @@ namespace AccessTransferClient
         private Label label2;
         private Label labelDataBaseConnected;
         private Label label3;
+        private Button buttonConnectToServer;
     }
 }
 

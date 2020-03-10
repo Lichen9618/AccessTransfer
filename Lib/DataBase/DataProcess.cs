@@ -8,13 +8,10 @@ namespace Lib.DataBase
     public class DataProcess
     {
         private ProcessPattern _processPattern;
-        private Configuration configuration;
-        public DataTable Table;
 
-        public DataProcess(string path)
+        public DataProcess(ProcessPattern pattern)
         {
-            path = "D:\\project\\cui\\code\\AccessTransfer\\Lib\\Config\\App.exe";
-            configuration = ConfigurationManager.OpenExeConfiguration(path);
+            _processPattern = pattern;
         }
 
         public void SetProcessPattern(ProcessPattern pattern)
@@ -29,7 +26,7 @@ namespace Lib.DataBase
             //TODO: 确保时间对表重新进行排序
             foreach (DataColumn column in dataTable.Columns)
             {
-                if (configuration.AppSettings.Settings[column.ColumnName].Value == "T")
+                if (ConfigurationManager.AppSettings[column.ColumnName] == "T")
                 {
                     newRow[column.ColumnName] = dataTable.Rows[0][column.ColumnName];
                 }
