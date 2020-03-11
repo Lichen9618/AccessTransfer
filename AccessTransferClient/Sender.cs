@@ -39,6 +39,10 @@ namespace AccessTransferClient
                     client.Start();
                     SetTheButton(false);
                 }
+                else 
+                {
+                    client.End();
+                }
             }
             else 
             {

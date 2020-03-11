@@ -2,6 +2,7 @@
 using Lib.DataBase.Model;
 using System;
 using System.Configuration;
+using System.Data;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -79,9 +80,8 @@ namespace Lib.DataTransfer
                 {
                     while (StartToSend)
                     {
-                        //开始写dataprocess返回处理好的数据, 并在dataprocess中, 加入序列化的部分
-                        string message = "Message from client: " + _clientName;
-                        clientSock.Send(Encoding.UTF8.GetBytes(message));
+                        accessConnection.RefreshData();
+                        clientSock.Send(accessConnection.data.SendData()); ;
                         System.Threading.Thread.Sleep(_interval * 1000);
                     }
                 }

@@ -64,9 +64,10 @@
     <Compile Include="DataBase\AccessConnection.cs" />
     <Compile Include="DataBase\DataProcess.cs" />
     <Compile Include="DataBase\Model\DataType.cs" />
+    <Compile Include="DataBase\Model\DataWrapper.cs" />
     <Compile Include="DataBase\Model\ProcessPattern.cs" />
-    <Compile Include="DataBase\utils\ISerializable.cs" />
     <Compile Include="DataTransfer\Client.cs" />
+    <Compile Include="DataTransfer\utils\JsonHelper.cs" />
     <Compile Include="DataTransfer\Server.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +85,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DataBase\utils\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

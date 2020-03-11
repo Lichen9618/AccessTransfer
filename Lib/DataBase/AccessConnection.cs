@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lib.DataBase.Model;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.OleDb;
@@ -15,9 +16,7 @@ namespace Lib.DataBase
         private ConnectionStringSettings mySettings;
 
         public bool IsConnected = false;
-        public DataTable _AlarmInfo;
-        public DataTable _tiong;
-        public DataTable _tmpAndMoistData;
+        public DataWrapper data;
 
 
 
@@ -81,10 +80,7 @@ namespace Lib.DataBase
             }
             if (IsConnected)
             {
-                if (queryAlarmInfo() && queryTiong() && queryTmpAndMoist())
-                {
-                    return true;
-                }
+                RefreshData();
             }
             return false;
         }
@@ -92,6 +88,18 @@ namespace Lib.DataBase
         public void CloseConnection()
         {
             dataBaseConnection.Close();
+        }
+
+        public bool RefreshData() 
+        {
+            if (queryAlarmInfo() && queryTiong() && queryTmpAndMoist())
+            {
+                return true;
+            }
+            else 
+            {
+                return false;
+            }
         }
 
         private bool queryAlarmInfo()
@@ -102,7 +110,7 @@ namespace Lib.DataBase
                 OleDbDataAdapter inst = new OleDbDataAdapter("SELECT * FROM MCGS_AlarmInfo", dataBaseConnection);
                 DataSet ds = new DataSet();
                 inst.Fill(ds);
-                this._AlarmInfo = ds.Tables[0];
+                data.SetAlarmInfo(ds.Tables[0]);
             }
             catch (Exception e)
             {
@@ -119,7 +127,7 @@ namespace Lib.DataBase
                 OleDbDataAdapter inst = new OleDbDataAdapter("SELECT * FROM tiong_MCGS", dataBaseConnection);
                 DataSet ds = new DataSet();
                 inst.Fill(ds);
-                _tiong = ds.Tables[0];
+                data.SetTiong(ds.Tables[0]);
             }
             catch (Exception e)
             {
@@ -136,7 +144,7 @@ namespace Lib.DataBase
                 OleDbDataAdapter inst = new OleDbDataAdapter("SELECT * FROM 温湿度数据_MCGS", dataBaseConnection);
                 DataSet ds = new DataSet();
                 inst.Fill(ds);
-                _tmpAndMoistData = ds.Tables[0];
+                data.SetTmpAndMoistData(ds.Tables[0]);
             }
             catch (Exception e)
             {
