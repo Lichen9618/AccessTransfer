@@ -22,6 +22,7 @@ namespace Lib.DataBase
 
         public AccessConnection(string file)
         {
+            data = new DataWrapper();
             try
             {
                 configuration = ConfigurationManager.OpenExeConfiguration(file);
