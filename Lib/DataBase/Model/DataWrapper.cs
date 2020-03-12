@@ -64,7 +64,7 @@ namespace Lib.DataBase.Model
             return JsonHelper.SerializeObject(this);
         }
 
-        public DataWrapper Deserialize(string data) 
+        public static DataWrapper Deserialize(string data) 
         {
             try
             {

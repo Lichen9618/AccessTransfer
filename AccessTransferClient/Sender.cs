@@ -33,7 +33,14 @@ namespace AccessTransferClient
                 client.SetSend();
                 if (client.StartToSend == true)
                 {
-                    client.SetDataPickInterval(int.Parse(textBoxInterval.Text));
+                    if (textBoxInterval.Text != "")
+                    {
+                        client.SetDataPickInterval(int.Parse(textBoxInterval.Text));
+                    }
+                    else 
+                    {
+                        client.SetDataPickInterval();
+                    }                    
                     client.SetAcceesConnection(accessConnection);
                     GetProcessPattern();
                     client.Start();
@@ -65,6 +72,7 @@ namespace AccessTransferClient
             {
                 if (!(client is null)) 
                 {
+                    client.accessConnection.CloseConnection();
                     client.End();
                 }                
                 e.Cancel = false;

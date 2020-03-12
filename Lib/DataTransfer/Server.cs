@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Lib.DataBase.Model;
 
 namespace Lib.DataTransfer
 {
@@ -63,13 +64,14 @@ namespace Lib.DataTransfer
             while (receiveMessage)
             {
                 Socket client = Message as Socket;
-                byte[] messageBytes = new byte[100];
+                byte[] messageBytes = new byte[1024 * 1024];
                 try
                 {
                     int num = client.Receive(messageBytes);
                     if (num != 0)
                     {
                         TransferMessage = Encoding.UTF8.GetString(messageBytes);
+                        DataWrapper wrapper = DataWrapper.Deserialize(TransferMessage);
                     }
                     IPEndPoint clientPoint = client.RemoteEndPoint as IPEndPoint;
                     //对messageBytes进行进一步处理                   
@@ -81,12 +83,6 @@ namespace Lib.DataTransfer
                 }
             }
         }
-
-        public void End()
-        {
-            Environment.Exit(0);
-        }
-
         public string ShowMessage()
         {
             string result = TransferMessage;
@@ -94,11 +90,19 @@ namespace Lib.DataTransfer
             return result;
         }
 
-        public string ShowConnectionMessage()
+        public bool ShowConnectionMessage(out string result)
         {
-            string result = ConnectionMessage;
-            ConnectionMessage = "";
-            return result;
+            if (ConnectionMessage == "")
+            {
+                result = "";
+                return false;
+            }
+            else 
+            {
+                result = ConnectionMessage;
+                ConnectionMessage = "";
+                return true;
+            }
         }
 
         public void Start()

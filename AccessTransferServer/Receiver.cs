@@ -8,10 +8,11 @@ namespace AccessTransferServer
     public partial class Receiver : Form
     {
         public Server server;
+        System.Timers.Timer timer;
         public Receiver()
         {
             server = new Server();
-            var timer = new System.Timers.Timer();
+            timer = new System.Timers.Timer();
             InitializeComponent();
             Control.CheckForIllegalCrossThreadCalls = false;
             this.FormClosing += new FormClosingEventHandler(this.Close);
@@ -40,6 +41,11 @@ namespace AccessTransferServer
         private void FreshMessage(object source, ElapsedEventArgs e)
         {
             string text = server.ShowMessage();
+            string connectionText;
+            if (server.ShowConnectionMessage(out connectionText)) 
+            {
+                richTextBox.AppendText("\r\n" + connectionText);
+            }
             if (text != "")
             {
                 richTextBox.AppendText("\r\n" + text);
@@ -51,7 +57,7 @@ namespace AccessTransferServer
             DialogResult dr = MessageBox.Show("是否退出?", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (dr == DialogResult.OK)
             {
-                server.End();
+                timer.Stop();
                 e.Cancel = false;
             }
             else if (dr == DialogResult.Cancel)

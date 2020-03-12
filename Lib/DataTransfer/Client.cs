@@ -94,7 +94,6 @@ namespace Lib.DataTransfer
             {
                 throw new Exception("数据库连接断开");
             }
-
         }
 
         public void SendTestMessage() 

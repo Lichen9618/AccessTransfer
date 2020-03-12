@@ -24,9 +24,6 @@ namespace Lib.DataBase.Tests
 
             table.Rows.Add(newRow1);
             table.Rows.Add(newRow2);
-
-            DataProcess dataProcess = new DataProcess("test");
-            dataProcess.Process(table);
         }
     }
 }

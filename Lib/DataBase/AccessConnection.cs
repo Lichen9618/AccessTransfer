@@ -41,11 +41,6 @@ namespace Lib.DataBase
 
         }
 
-        ~AccessConnection()
-        {
-            dataBaseConnection.Close();
-        }
-
         //Provider=Microsoft.Jet.OLEDB.4.0;Data Source=D:\project\cui\2019-12-15D(1).MDB
         public bool SetConnection(string dataBasePath)
         {
@@ -83,7 +78,7 @@ namespace Lib.DataBase
             {
                 RefreshData();
             }
-            return false;
+            return IsConnected;
         }
 
         public void CloseConnection()
