@@ -14,6 +14,8 @@ namespace Lib.DataBase
         private Configuration configuration;
         private OleDbConnection dataBaseConnection;
         private ConnectionStringSettings mySettings;
+        private DateTime timeStamp;
+        private bool running = false;
 
         public bool IsConnected = false;
         public DataWrapper data;
@@ -74,10 +76,10 @@ namespace Lib.DataBase
             catch
             {
             }
-            if (IsConnected)
-            {
-                RefreshData();
-            }
+            //if (IsConnected)
+            //{
+            //    RefreshData();
+            //}
             return IsConnected;
         }
 
@@ -88,8 +90,15 @@ namespace Lib.DataBase
 
         public bool RefreshData() 
         {
+            if (running == false)
+            {
+                string time = configuration.AppSettings.Settings["AccessTime"].Value;
+                timeStamp = Convert.ToDateTime(time);
+                running = !running;
+            }
             if (queryAlarmInfo() && queryTiong() && queryTmpAndMoist())
             {
+                data.CalculateSize();
                 return true;
             }
             else 
@@ -98,12 +107,31 @@ namespace Lib.DataBase
             }
         }
 
+        public void ChangeTimeStamp() 
+        {
+            try
+            {
+                timeStamp = DateTime.Now;
+                configuration.AppSettings.Settings["AccessTime"].Value = timeStamp.ToString("yyyy-MM-dd hh:mm:ss");
+                configuration.Save();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            
+            
+        }
+
         private bool queryAlarmInfo()
         {
             try
             {
                 //TODO: 表名通过配置文件配置
-                OleDbDataAdapter inst = new OleDbDataAdapter("SELECT * FROM MCGS_AlarmInfo", dataBaseConnection);
+                string queryString = "SELECT * FROM MCGS_AlarmInfo";
+                string timeCondition = getTimeCondition("TimeS");
+                queryString += timeCondition;
+                OleDbDataAdapter inst = new OleDbDataAdapter(queryString, dataBaseConnection);
                 DataSet ds = new DataSet();
                 inst.Fill(ds);
                 data.SetAlarmInfo(ds.Tables[0]);
@@ -120,7 +148,10 @@ namespace Lib.DataBase
             try
             {
                 //TODO: 表名通过配置文件配置
-                OleDbDataAdapter inst = new OleDbDataAdapter("SELECT * FROM tiong_MCGS", dataBaseConnection);
+                string queryString = "SELECT * FROM tiong_MCGS";
+                string timeCondition = getTimeCondition("MCGS_Time");
+                queryString += timeCondition;
+                OleDbDataAdapter inst = new OleDbDataAdapter(queryString, dataBaseConnection);
                 DataSet ds = new DataSet();
                 inst.Fill(ds);
                 data.SetTiong(ds.Tables[0]);
@@ -137,7 +168,10 @@ namespace Lib.DataBase
             try
             {
                 //TODO: 表名通过配置文件配置
-                OleDbDataAdapter inst = new OleDbDataAdapter("SELECT * FROM 温湿度数据_MCGS", dataBaseConnection);
+                string queryString = "SELECT * FROM 温湿度数据_MCGS";
+                string timeCondition = getTimeCondition("MCGS_Time");
+                queryString += timeCondition;
+                OleDbDataAdapter inst = new OleDbDataAdapter(queryString, dataBaseConnection);
                 DataSet ds = new DataSet();
                 inst.Fill(ds);
                 data.SetTmpAndMoistData(ds.Tables[0]);
@@ -148,5 +182,17 @@ namespace Lib.DataBase
             }
             return true;
         }
+
+        private string getTimeCondition(string keyWord) 
+        {
+            if (timeStamp == null) 
+            {
+                return null;
+            }
+            string result = " where " + keyWord + " > " + "#" + timeStamp.ToString("yyyy-MM-dd hh:mm:ss") + "#";  
+            return result;
+        }
+
+
     }
 }

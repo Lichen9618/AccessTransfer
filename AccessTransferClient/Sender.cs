@@ -72,7 +72,10 @@ namespace AccessTransferClient
             {
                 if (!(client is null)) 
                 {
-                    client.accessConnection.CloseConnection();
+                    if (client.accessConnection.IsConnected == true)
+                    {
+                        client.accessConnection.CloseConnection();
+                    }
                     client.End();
                 }                
                 e.Cancel = false;

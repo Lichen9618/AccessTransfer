@@ -34,7 +34,7 @@ namespace AccessTransferServer
             }
             else
             {
-                richTextBox.AppendText("结束监听:" + "\r\n");
+                richTextBox.AppendText("\r\n" + "结束监听:");
             }
         }
 
@@ -57,8 +57,10 @@ namespace AccessTransferServer
             DialogResult dr = MessageBox.Show("是否退出?", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (dr == DialogResult.OK)
             {
+                server.Stop();
                 timer.Stop();
                 e.Cancel = false;
+
             }
             else if (dr == DialogResult.Cancel)
             {

@@ -81,8 +81,32 @@ namespace Lib.DataTransfer
                     while (StartToSend)
                     {
                         accessConnection.RefreshData();
-                        clientSock.Send(accessConnection.data.SendData()); ;
-                        System.Threading.Thread.Sleep(_interval * 1000);
+                        accessConnection.data.SetInformation(_clientName);
+                        if (accessConnection.data.recordCount != 0)
+                        {
+                            byte[] sendMessageBytes = accessConnection.data.SendData();
+                            clientSock.Send(sendMessageBytes);
+                            System.Threading.Thread.Sleep(_interval * 1000);
+                            try
+                            {
+                                byte[] messageBytes = new byte[100 * 1024];
+                                clientSock.Receive(messageBytes);
+                                string message = Encoding.UTF8.GetString(messageBytes);
+                                ResponseMessage response = ResponseMessage.Deserialize(message);
+                                if (response.Length == accessConnection.data.recordCount)
+                                {
+                                    accessConnection.ChangeTimeStamp();
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                throw new Exception("未收到返回确认");
+                            };
+                        }
+                        else 
+                        {
+                            System.Threading.Thread.Sleep(_interval * 1000);
+                        }
                     }
                 }
                 catch (Exception)

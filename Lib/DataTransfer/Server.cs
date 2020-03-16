@@ -13,6 +13,7 @@ namespace Lib.DataTransfer
     {
         private IPAddress _ipAddress;
         private int _port;
+        private Thread acceptThread;
 
         string TransferMessage;
         string ConnectionMessage;
@@ -55,7 +56,7 @@ namespace Lib.DataTransfer
                 clientList.Add(client);
                 Thread tempClient = new Thread(ReceiveMessage);
                 tempClient.Start(client);
-                ConnectionMessage = ("连接客户端" + endPoint.Address.ToString());
+                //ConnectionMessage = ("连接客户端" + endPoint.Address.ToString());
             }
         }
 
@@ -70,8 +71,11 @@ namespace Lib.DataTransfer
                     int num = client.Receive(messageBytes);
                     if (num != 0)
                     {
-                        TransferMessage = Encoding.UTF8.GetString(messageBytes);
-                        DataWrapper wrapper = DataWrapper.Deserialize(TransferMessage);
+                        string message = Encoding.UTF8.GetString(messageBytes);
+                        DataWrapper wrapper = DataWrapper.Deserialize(message);
+                        AnalysisMessgae(wrapper);
+                        ResponseMessage response = new ResponseMessage(wrapper.recordCount);
+                        client.Send(response.SendData());
                     }
                     IPEndPoint clientPoint = client.RemoteEndPoint as IPEndPoint;
                     //对messageBytes进行进一步处理                   
@@ -83,8 +87,17 @@ namespace Lib.DataTransfer
                 }
             }
         }
-        public string ShowMessage()
+        private void AnalysisMessgae(DataWrapper wrapper) 
         {
+            TransferMessage =
+                "收到来自: " + wrapper.clientName +
+                "\r\nAlarmInfo: " + wrapper._AlarmInfo.Rows.Count +
+                "\r\nTiong记录: " + wrapper._tiong.Rows.Count +
+                "\r\n温湿度数据:" + wrapper._tmpAndMoistData.Rows.Count;
+        }
+
+        public string ShowMessage()
+        {            
             string result = TransferMessage;
             TransferMessage = "";
             return result;
@@ -107,8 +120,25 @@ namespace Lib.DataTransfer
 
         public void Start()
         {
-            Thread thread = new Thread(AcceptClient);
-            thread.Start();
+            acceptThread = new Thread(AcceptClient);
+            acceptThread.Start();
+        }
+
+        public void Stop() 
+        {
+            if (connect) 
+            {
+                SetConnect();
+            }
+            if (receiveMessage) 
+            {
+                SetReceiveMessage();
+            }
+            serverSock.Close();
+            foreach (var client in clientList) 
+            {
+                client.Close();
+            }
         }
     }
 }

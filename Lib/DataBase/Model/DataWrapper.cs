@@ -13,6 +13,19 @@ namespace Lib.DataBase.Model
         public DataTable _AlarmInfo;
         public DataTable _tiong;
         public DataTable _tmpAndMoistData;
+        public int recordCount = 0;
+
+        public string clientName;
+
+        public void SetInformation(string Name) 
+        {
+            clientName = Name;
+        }
+
+        public void CalculateSize() 
+        {
+            recordCount = _AlarmInfo.Rows.Count + _tiong.Rows.Count + _tmpAndMoistData.Rows.Count;
+        }
 
         public bool SetAlarmInfo(DataTable alarmInfo) 
         {
@@ -37,7 +50,7 @@ namespace Lib.DataBase.Model
 
         public bool IsReady() 
         {
-            if (_AlarmInfo is null || _tiong is null || _tmpAndMoistData is null)
+            if (recordCount == 0)
             {
                 return false;
             }
