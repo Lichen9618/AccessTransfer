@@ -10,8 +10,8 @@ namespace Lib.DataBase.Model
 {
     public class DataWrapper
     {
-        public DataTable _AlarmInfo;
-        public DataTable _tiong;
+        //public DataTable _AlarmInfo;
+        public DataTable _onOffRecord;
         public DataTable _tmpAndMoistData;
         public int recordCount = 0;
 
@@ -24,20 +24,20 @@ namespace Lib.DataBase.Model
 
         public void CalculateSize() 
         {
-            recordCount = _AlarmInfo.Rows.Count + _tiong.Rows.Count + _tmpAndMoistData.Rows.Count;
+            recordCount = _onOffRecord.Rows.Count + _tmpAndMoistData.Rows.Count;
         }
 
-        public bool SetAlarmInfo(DataTable alarmInfo) 
-        {
-            //TODO:数据是否正确检查
-            _AlarmInfo = alarmInfo;
-            return true;
-        }
+        //public bool SetAlarmInfo(DataTable alarmInfo) 
+        //{
+        //    //TODO:数据是否正确检查
+        //    _AlarmInfo = alarmInfo;
+        //    return true;
+        //}
 
-        public bool SetTiong(DataTable tiong) 
+        public bool SetOnOffRecord(DataTable onOffRecord)
         {
             //TODO:数据是否正确检查
-            _tiong = tiong;
+            _onOffRecord = onOffRecord;
             return true;
         }
 

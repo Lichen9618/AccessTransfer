@@ -18,7 +18,7 @@ namespace AccessTransferServer
             this.FormClosing += new FormClosingEventHandler(this.Close);
 
             timer.Enabled = true;
-            timer.Interval = 500;
+            timer.Interval = 2000;
             timer.Start();
             timer.Elapsed += new System.Timers.ElapsedEventHandler(FreshMessage);
         }
@@ -50,6 +50,7 @@ namespace AccessTransferServer
             {
                 richTextBox.AppendText("\r\n" + text);
             }
+            richTextBoxConnectionPool.Text = server.CheckConnection();
         }
 
         private void Close(object sender, FormClosingEventArgs e)
@@ -67,6 +68,7 @@ namespace AccessTransferServer
                 e.Cancel = true;
             }
         }
+
 
     }
 }

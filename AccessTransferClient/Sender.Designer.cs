@@ -34,7 +34,7 @@ namespace AccessTransferClient
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonDataBaseChoose = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.u = new System.Windows.Forms.RadioButton();
+            this.radioButtonAverage = new System.Windows.Forms.RadioButton();
             this.radioButtonMaxValue = new System.Windows.Forms.RadioButton();
             this.radioButtonMinValue = new System.Windows.Forms.RadioButton();
             this.textBoxInterval = new System.Windows.Forms.TextBox();
@@ -46,15 +46,17 @@ namespace AccessTransferClient
             this.labelServerConnected = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.buttonConnectToServer = new System.Windows.Forms.Button();
+            this.radioButtonLatest = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(372, 107);
+            this.buttonStart.Location = new System.Drawing.Point(418, 128);
+            this.buttonStart.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(159, 42);
+            this.buttonStart.Size = new System.Drawing.Size(179, 50);
             this.buttonStart.TabIndex = 0;
             this.buttonStart.Text = "启动/停止发送";
             this.buttonStart.UseVisualStyleBackColor = true;
@@ -62,9 +64,10 @@ namespace AccessTransferClient
             // 
             // buttonDataBaseChoose
             // 
-            this.buttonDataBaseChoose.Location = new System.Drawing.Point(83, 32);
+            this.buttonDataBaseChoose.Location = new System.Drawing.Point(93, 38);
+            this.buttonDataBaseChoose.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonDataBaseChoose.Name = "buttonDataBaseChoose";
-            this.buttonDataBaseChoose.Size = new System.Drawing.Size(151, 32);
+            this.buttonDataBaseChoose.Size = new System.Drawing.Size(170, 38);
             this.buttonDataBaseChoose.TabIndex = 1;
             this.buttonDataBaseChoose.Text = "数据库文件选择";
             this.buttonDataBaseChoose.UseVisualStyleBackColor = true;
@@ -72,33 +75,38 @@ namespace AccessTransferClient
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.u);
+            this.groupBox1.Controls.Add(this.radioButtonLatest);
+            this.groupBox1.Controls.Add(this.radioButtonAverage);
             this.groupBox1.Controls.Add(this.radioButtonMaxValue);
             this.groupBox1.Controls.Add(this.radioButtonMinValue);
-            this.groupBox1.Location = new System.Drawing.Point(34, 78);
+            this.groupBox1.Location = new System.Drawing.Point(38, 94);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(269, 159);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox1.Size = new System.Drawing.Size(303, 191);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "数据处理模式";
             // 
-            // u
+            // radioButtonAverage
             // 
-            this.u.AutoSize = true;
-            this.u.Location = new System.Drawing.Point(24, 91);
-            this.u.Name = "u";
-            this.u.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.u.Size = new System.Drawing.Size(73, 19);
-            this.u.TabIndex = 2;
-            this.u.Text = "平均值";
-            this.u.UseVisualStyleBackColor = true;
+            this.radioButtonAverage.AutoSize = true;
+            this.radioButtonAverage.Location = new System.Drawing.Point(27, 109);
+            this.radioButtonAverage.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.radioButtonAverage.Name = "radioButtonAverage";
+            this.radioButtonAverage.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.radioButtonAverage.Size = new System.Drawing.Size(87, 22);
+            this.radioButtonAverage.TabIndex = 2;
+            this.radioButtonAverage.Text = "平均值";
+            this.radioButtonAverage.UseVisualStyleBackColor = true;
             // 
             // radioButtonMaxValue
             // 
             this.radioButtonMaxValue.AutoSize = true;
-            this.radioButtonMaxValue.Location = new System.Drawing.Point(24, 66);
+            this.radioButtonMaxValue.Location = new System.Drawing.Point(27, 79);
+            this.radioButtonMaxValue.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.radioButtonMaxValue.Name = "radioButtonMaxValue";
-            this.radioButtonMaxValue.Size = new System.Drawing.Size(73, 19);
+            this.radioButtonMaxValue.Size = new System.Drawing.Size(87, 22);
             this.radioButtonMaxValue.TabIndex = 1;
             this.radioButtonMaxValue.Text = "最大值";
             this.radioButtonMaxValue.UseVisualStyleBackColor = true;
@@ -107,9 +115,10 @@ namespace AccessTransferClient
             // 
             this.radioButtonMinValue.AutoSize = true;
             this.radioButtonMinValue.Checked = true;
-            this.radioButtonMinValue.Location = new System.Drawing.Point(24, 41);
+            this.radioButtonMinValue.Location = new System.Drawing.Point(27, 49);
+            this.radioButtonMinValue.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.radioButtonMinValue.Name = "radioButtonMinValue";
-            this.radioButtonMinValue.Size = new System.Drawing.Size(73, 19);
+            this.radioButtonMinValue.Size = new System.Drawing.Size(87, 22);
             this.radioButtonMinValue.TabIndex = 0;
             this.radioButtonMinValue.TabStop = true;
             this.radioButtonMinValue.Text = "最小值";
@@ -117,26 +126,27 @@ namespace AccessTransferClient
             // 
             // textBoxInterval
             // 
-            this.textBoxInterval.Location = new System.Drawing.Point(431, 46);
+            this.textBoxInterval.Location = new System.Drawing.Point(485, 55);
+            this.textBoxInterval.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBoxInterval.Name = "textBoxInterval";
-            this.textBoxInterval.Size = new System.Drawing.Size(100, 25);
+            this.textBoxInterval.Size = new System.Drawing.Size(112, 28);
             this.textBoxInterval.TabIndex = 3;
             // 
             // label
             // 
             this.label.AutoSize = true;
-            this.label.Location = new System.Drawing.Point(320, 49);
+            this.label.Location = new System.Drawing.Point(360, 59);
             this.label.Name = "label";
-            this.label.Size = new System.Drawing.Size(105, 15);
+            this.label.Size = new System.Drawing.Size(125, 18);
             this.label.TabIndex = 4;
             this.label.Text = "数据采集间隔:";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(537, 49);
+            this.label1.Location = new System.Drawing.Point(604, 59);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(22, 15);
+            this.label1.Size = new System.Drawing.Size(26, 18);
             this.label1.TabIndex = 5;
             this.label1.Text = "秒";
             // 
@@ -146,9 +156,11 @@ namespace AccessTransferClient
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.labelServerConnected);
             this.groupBox2.Controls.Add(this.label2);
-            this.groupBox2.Location = new System.Drawing.Point(39, 255);
+            this.groupBox2.Location = new System.Drawing.Point(44, 306);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(501, 160);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.groupBox2.Size = new System.Drawing.Size(564, 192);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "连接状态";
@@ -156,54 +168,66 @@ namespace AccessTransferClient
             // labelDataBaseConnected
             // 
             this.labelDataBaseConnected.AutoSize = true;
-            this.labelDataBaseConnected.Location = new System.Drawing.Point(151, 97);
+            this.labelDataBaseConnected.Location = new System.Drawing.Point(170, 116);
             this.labelDataBaseConnected.Name = "labelDataBaseConnected";
-            this.labelDataBaseConnected.Size = new System.Drawing.Size(55, 15);
+            this.labelDataBaseConnected.Size = new System.Drawing.Size(62, 18);
             this.labelDataBaseConnected.TabIndex = 3;
             this.labelDataBaseConnected.Text = "label4";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(26, 97);
+            this.label3.Location = new System.Drawing.Point(29, 116);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(120, 15);
+            this.label3.Size = new System.Drawing.Size(143, 18);
             this.label3.TabIndex = 2;
             this.label3.Text = "是否连接数据库:";
             // 
             // labelServerConnected
             // 
             this.labelServerConnected.AutoSize = true;
-            this.labelServerConnected.Location = new System.Drawing.Point(151, 40);
+            this.labelServerConnected.Location = new System.Drawing.Point(170, 48);
             this.labelServerConnected.Name = "labelServerConnected";
-            this.labelServerConnected.Size = new System.Drawing.Size(55, 15);
+            this.labelServerConnected.Size = new System.Drawing.Size(62, 18);
             this.labelServerConnected.TabIndex = 1;
             this.labelServerConnected.Text = "label3";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(26, 40);
+            this.label2.Location = new System.Drawing.Point(29, 48);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(105, 15);
+            this.label2.Size = new System.Drawing.Size(125, 18);
             this.label2.TabIndex = 0;
             this.label2.Text = "是否接服务端:";
             // 
             // buttonConnectToServer
             // 
-            this.buttonConnectToServer.Location = new System.Drawing.Point(372, 178);
+            this.buttonConnectToServer.Location = new System.Drawing.Point(418, 214);
+            this.buttonConnectToServer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.buttonConnectToServer.Name = "buttonConnectToServer";
-            this.buttonConnectToServer.Size = new System.Drawing.Size(159, 37);
+            this.buttonConnectToServer.Size = new System.Drawing.Size(179, 44);
             this.buttonConnectToServer.TabIndex = 7;
             this.buttonConnectToServer.Text = "连接服务端";
             this.buttonConnectToServer.UseVisualStyleBackColor = true;
             this.buttonConnectToServer.Click += new System.EventHandler(this.buttonConnectToServer_Click);
             // 
+            // radioButtonLatest
+            // 
+            this.radioButtonLatest.AutoSize = true;
+            this.radioButtonLatest.Location = new System.Drawing.Point(27, 138);
+            this.radioButtonLatest.Name = "radioButtonLatest";
+            this.radioButtonLatest.Size = new System.Drawing.Size(87, 22);
+            this.radioButtonLatest.TabIndex = 3;
+            this.radioButtonLatest.TabStop = true;
+            this.radioButtonLatest.Text = "最新值";
+            this.radioButtonLatest.UseVisualStyleBackColor = true;
+            // 
             // Sender
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 441);
+            this.ClientSize = new System.Drawing.Size(655, 529);
             this.Controls.Add(this.buttonConnectToServer);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.label1);
@@ -212,6 +236,7 @@ namespace AccessTransferClient
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.buttonDataBaseChoose);
             this.Controls.Add(this.buttonStart);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Sender";
             this.Text = "Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Close);
@@ -230,7 +255,7 @@ namespace AccessTransferClient
         private System.Windows.Forms.Button buttonStart;
         private System.Windows.Forms.Button buttonDataBaseChoose;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton u;
+        private System.Windows.Forms.RadioButton radioButtonAverage;
         private System.Windows.Forms.RadioButton radioButtonMaxValue;
         private System.Windows.Forms.RadioButton radioButtonMinValue;
         private System.Windows.Forms.TextBox textBoxInterval;
@@ -242,6 +267,7 @@ namespace AccessTransferClient
         private Label labelDataBaseConnected;
         private Label label3;
         private Button buttonConnectToServer;
+        private RadioButton radioButtonLatest;
     }
 }
 

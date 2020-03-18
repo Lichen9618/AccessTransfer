@@ -52,7 +52,6 @@ namespace Lib.DataTransfer
             while (connect)
             {
                 Socket client = serverSock.Accept();
-                IPEndPoint endPoint = client.RemoteEndPoint as IPEndPoint;
                 clientList.Add(client);
                 Thread tempClient = new Thread(ReceiveMessage);
                 tempClient.Start(client);
@@ -91,9 +90,27 @@ namespace Lib.DataTransfer
         {
             TransferMessage =
                 "收到来自: " + wrapper.clientName +
-                "\r\nAlarmInfo: " + wrapper._AlarmInfo.Rows.Count +
-                "\r\nTiong记录: " + wrapper._tiong.Rows.Count +
+                //"\r\nAlarmInfo: " + wrapper._AlarmInfo.Rows.Count +
+                "\r\n开关量存盘记录: " + wrapper._onOffRecord.Rows.Count +
                 "\r\n温湿度数据:" + wrapper._tmpAndMoistData.Rows.Count;
+        }       
+
+        public string CheckConnection() 
+        {
+            string result = "";
+            foreach (var client in clientList)
+            {
+                try
+                {
+                    client.Send(new byte[] { 0x00 });
+                    result += client.RemoteEndPoint.ToString();
+                }
+                catch (SocketException e) 
+                {
+                    clientList.Remove(client);
+                }                
+            }
+            return result;
         }
 
         public string ShowMessage()

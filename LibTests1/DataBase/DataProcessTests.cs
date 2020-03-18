@@ -12,7 +12,7 @@ namespace Lib.DataBase.Tests
         {
             DataTable table = new DataTable();
             table.Columns.Add("MCGS_Time", Type.GetType("System.DateTime"));
-            table.Columns.Add("MCGS_TimeMS", Type.GetType("System.Single"));
+            table.Columns.Add("MCGS_TimeMS", Type.GetType("System.Int32"));
 
             DataRow newRow1 = table.NewRow();
             newRow1[0] = DateTime.Now;
@@ -24,6 +24,9 @@ namespace Lib.DataBase.Tests
 
             table.Rows.Add(newRow1);
             table.Rows.Add(newRow2);
+
+            DataProcess process = new DataProcess(Model.ProcessPattern.Latest);
+            process.Process(table);
         }
     }
 }

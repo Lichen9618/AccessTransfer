@@ -15,11 +15,11 @@ namespace Lib.DataBase.Tests
         [TestMethod()]
         public void ChangeTimeStampTest()
         {
-            AccessConnection accessConnection = new AccessConnection("D:\\project\\cui\\code\\AccessTransfer\\AccessTransferClient\\bin\\Debug\\AccessTransferClient.exe");
-            accessConnection.SetConnection("D:\\project\\cui\\2019-12-15D.MDB");
-            accessConnection.OpenConnection();
-            accessConnection.RefreshData();
-            accessConnection.ChangeTimeStamp();           
+            //AccessConnection accessConnection = new AccessConnection("D:\\project\\cui\\code\\AccessTransfer\\AccessTransferClient\\bin\\Debug\\AccessTransferClient.exe");
+            //accessConnection.SetConnection("D:\\project\\cui\\2019-12-15D.MDB");
+            //accessConnection.OpenConnection();
+            //accessConnection.RefreshData();
+            //accessConnection.ChangeTimeStamp();           
         }
     }
 }

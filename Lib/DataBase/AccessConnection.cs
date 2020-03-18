@@ -19,6 +19,7 @@ namespace Lib.DataBase
 
         public bool IsConnected = false;
         public DataWrapper data;
+        public DataProcess process;
 
 
 
@@ -88,15 +89,17 @@ namespace Lib.DataBase
             dataBaseConnection.Close();
         }
 
-        public bool RefreshData() 
+        public bool RefreshData(ProcessPattern pattern) 
         {
+            process = new DataProcess(pattern);
             if (running == false)
             {
                 string time = configuration.AppSettings.Settings["AccessTime"].Value;
                 timeStamp = Convert.ToDateTime(time);
                 running = !running;
             }
-            if (queryAlarmInfo() && queryTiong() && queryTmpAndMoist())
+            //if (queryAlarmInfo() && queryOnOffRecord() && queryTmpAndMoist())
+            if (queryOnOffRecord() && queryTmpAndMoist())
             {
                 data.CalculateSize();
                 return true;
@@ -123,38 +126,38 @@ namespace Lib.DataBase
             
         }
 
-        private bool queryAlarmInfo()
-        {
-            try
-            {
-                //TODO: 表名通过配置文件配置
-                string queryString = "SELECT * FROM MCGS_AlarmInfo";
-                string timeCondition = getTimeCondition("TimeS");
-                queryString += timeCondition;
-                OleDbDataAdapter inst = new OleDbDataAdapter(queryString, dataBaseConnection);
-                DataSet ds = new DataSet();
-                inst.Fill(ds);
-                data.SetAlarmInfo(ds.Tables[0]);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            return true;
-        }
+        //private bool queryAlarmInfo()
+        //{
+        //    try
+        //    {
+        //        //TODO: 表名通过配置文件配置
+        //        string queryString = "SELECT * FROM MCGS_AlarmInfo";
+        //        string timeCondition = getTimeCondition("TimeS");
+        //        queryString += timeCondition;
+        //        OleDbDataAdapter inst = new OleDbDataAdapter(queryString, dataBaseConnection);
+        //        DataSet ds = new DataSet();
+        //        inst.Fill(ds);                
+        //        data.SetAlarmInfo(process.Process(ds.Tables[0]));
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw e;
+        //    }
+        //    return true;
+        //}
 
-        private bool queryTiong()
+        private bool queryOnOffRecord()
         {
             try
             {
                 //TODO: 表名通过配置文件配置
-                string queryString = "SELECT * FROM tiong_MCGS";
+                string queryString = "SELECT * FROM 开关量存盘_MCGS";
                 string timeCondition = getTimeCondition("MCGS_Time");
                 queryString += timeCondition;
                 OleDbDataAdapter inst = new OleDbDataAdapter(queryString, dataBaseConnection);
                 DataSet ds = new DataSet();
                 inst.Fill(ds);
-                data.SetTiong(ds.Tables[0]);
+                data.SetOnOffRecord(process.Process((ds.Tables[0])));
             }
             catch (Exception e)
             {
@@ -174,7 +177,7 @@ namespace Lib.DataBase
                 OleDbDataAdapter inst = new OleDbDataAdapter(queryString, dataBaseConnection);
                 DataSet ds = new DataSet();
                 inst.Fill(ds);
-                data.SetTmpAndMoistData(ds.Tables[0]);
+                data.SetTmpAndMoistData(process.Process(ds.Tables[0]));
             }
             catch (Exception e)
             {

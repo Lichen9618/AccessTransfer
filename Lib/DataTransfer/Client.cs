@@ -48,6 +48,7 @@ namespace Lib.DataTransfer
             }
         }
 
+
         public bool SetAcceesConnection(AccessConnection connection) 
         {
             this.accessConnection = connection;
@@ -61,7 +62,6 @@ namespace Lib.DataTransfer
 
         public void Start()
         {
-            dataProcess = new DataProcess(processPattern);
             thread = new Thread(SendMessage);
             thread.Start();
             //ReceiveMessage();
@@ -80,7 +80,8 @@ namespace Lib.DataTransfer
                 {
                     while (StartToSend)
                     {
-                        accessConnection.RefreshData();
+                        accessConnection.RefreshData(processPattern);
+                        accessConnection.process.SetProcessPattern(processPattern);
                         accessConnection.data.SetInformation(_clientName);
                         if (accessConnection.data.recordCount != 0)
                         {
@@ -136,8 +137,6 @@ namespace Lib.DataTransfer
                 throw new Exception("连接已断开");
             }
         }
-
-
 
         public bool SetDataPickInterval(int interval = 3)
         {

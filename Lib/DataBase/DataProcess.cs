@@ -22,11 +22,19 @@ namespace Lib.DataBase
         public DataTable Process(DataTable dataTable)
         {
             DataTable result = dataTable.Clone();
+            if (dataTable.Rows.Count == 0)
+            {
+                return dataTable;
+            }
             DataRow newRow = result.NewRow();
             //TODO: 确保时间对表重新进行排序
             foreach (DataColumn column in dataTable.Columns)
             {
                 if (ConfigurationManager.AppSettings[column.ColumnName] == "T")
+                {
+                    newRow[column.ColumnName] = dataTable.Rows[0][column.ColumnName];
+                }
+                else if(ConfigurationManager.AppSettings[column.ColumnName] == "S")
                 {
                     newRow[column.ColumnName] = dataTable.Rows[0][column.ColumnName];
                 }
@@ -42,6 +50,9 @@ namespace Lib.DataBase
                             break;
                         case ProcessPattern.Average:
                             newRow[column.ColumnName] = AverageProcess(column);
+                            break;
+                        case ProcessPattern.Latest:
+                            newRow[column.ColumnName] = LatestProcess(column);
                             break;
                     }
                 }
@@ -87,7 +98,12 @@ namespace Lib.DataBase
             {
                 sum += Convert.ToDecimal(column.Table.Rows[i][column.ColumnName]);
             }
-            return Math.Round(sum / (column.Table.Rows.Count), 2);
+            return Math.Round(sum / (column.Table.Rows.Count), 1);
+        }
+
+        private decimal LatestProcess(DataColumn column)         
+        {
+            return Convert.ToDecimal(column.Table.Rows[column.Table.Rows.Count - 1][column.ColumnName]);
         }
 
     }

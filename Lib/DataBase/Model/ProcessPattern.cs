@@ -4,6 +4,7 @@
     {
         Max,
         Min,
-        Average
+        Average,
+        Latest
     }
 }

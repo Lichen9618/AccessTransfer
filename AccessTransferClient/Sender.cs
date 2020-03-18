@@ -132,10 +132,15 @@ namespace AccessTransferClient
             {
                 client.processPattern = Lib.DataBase.Model.ProcessPattern.Min;
             }
-            else 
+            else if (radioButtonAverage.Checked)
             {
                 client.processPattern = Lib.DataBase.Model.ProcessPattern.Average;
             }
+            else 
+            {
+                client.processPattern = Lib.DataBase.Model.ProcessPattern.Latest;
+            }
+
         }
     }
 }
