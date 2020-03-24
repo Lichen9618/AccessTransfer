@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Lib.DataBase;
 using Lib.DataBase.Model;
 
 namespace Lib.DataTransfer
@@ -55,7 +56,6 @@ namespace Lib.DataTransfer
                 clientList.Add(client);
                 Thread tempClient = new Thread(ReceiveMessage);
                 tempClient.Start(client);
-                //ConnectionMessage = ("连接客户端" + endPoint.Address.ToString());
             }
         }
 
@@ -72,6 +72,7 @@ namespace Lib.DataTransfer
                     {
                         string message = Encoding.UTF8.GetString(messageBytes);
                         DataWrapper wrapper = DataWrapper.Deserialize(message);
+                        SqlServerConnection.WriteToDataBase(wrapper._tmpAndMoistData, "温湿度数据_MCGS", false, false);
                         AnalysisMessgae(wrapper);
                         ResponseMessage response = new ResponseMessage(wrapper.recordCount);
                         client.Send(response.SendData());
@@ -98,19 +99,30 @@ namespace Lib.DataTransfer
         public string CheckConnection() 
         {
             string result = "";
-            foreach (var client in clientList)
+            if (clientList.Count == 0) 
             {
-                try
-                {
-                    client.Send(new byte[] { 0x00 });
-                    result += client.RemoteEndPoint.ToString();
-                }
-                catch (SocketException e) 
-                {
-                    clientList.Remove(client);
-                }                
+                return result;
             }
-            return result;
+            if (clientList.Count == 1)
+            {
+                return clientList[0].RemoteEndPoint.ToString();
+            }
+            else 
+            {
+                foreach (var client in clientList)
+                {
+                    try
+                    {
+                        client.Send(new byte[] { 0x00 });
+                        result += client.RemoteEndPoint.ToString();
+                    }
+                    catch (SocketException e)
+                    {
+                        clientList.Remove(client);
+                    }
+                }
+                return result;
+            }
         }
 
         public string ShowMessage()

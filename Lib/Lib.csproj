@@ -70,6 +70,7 @@
     <Compile Include="DataBase\Model\DataWrapper.cs" />
     <Compile Include="DataBase\Model\ProcessPattern.cs" />
     <Compile Include="DataBase\Model\ResponseMessage.cs" />
+    <Compile Include="DataBase\SqlServerConnection.cs" />
     <Compile Include="DataTransfer\Client.cs" />
     <Compile Include="DataTransfer\utils\JsonHelper.cs" />
     <Compile Include="DataTransfer\Server.cs" />
