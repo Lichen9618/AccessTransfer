@@ -45,6 +45,7 @@ namespace AccessTransferClient
                     GetProcessPattern();
                     client.Start();
                     SetTheButton(false);
+                    return;
                 }
                 else 
                 {

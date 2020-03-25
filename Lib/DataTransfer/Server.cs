@@ -72,7 +72,7 @@ namespace Lib.DataTransfer
                     {
                         string message = Encoding.UTF8.GetString(messageBytes);
                         DataWrapper wrapper = DataWrapper.Deserialize(message);
-                        SqlServerConnection.WriteToDataBase(wrapper._tmpAndMoistData, "温湿度数据_MCGS", false, false);
+                        SqlServerConnection.WriteDataToDB(wrapper);
                         AnalysisMessgae(wrapper);
                         ResponseMessage response = new ResponseMessage(wrapper.recordCount);
                         client.Send(response.SendData());

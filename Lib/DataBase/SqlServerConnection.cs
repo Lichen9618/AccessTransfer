@@ -19,42 +19,49 @@ namespace Lib.DataBase
         /// <param name="databaseConnString">数据库连接字符串</param>
         /// <param name="dropTable">删除DB中已存在的表(并自动新建表)</param>
         /// <param name="primaryKeys">主键的列名</param>github
-        public static void WriteToDataBase(DataTable source, string tableName, bool useTransaction, bool dropTable)
+        private static bool WriteToDataBase(DataTable source, string tableName, bool useTransaction = true, bool dropTable = false)
         {
-            //判断表是否存在 
-            //dataHelper.IsConnString = true; //使用数据库连接字符串创建sqlserver操作对象 
-            string sql = "select * from sys.objects where type='U' and name='" + tableName + "'";
-            DataTable dt = Query(sql);
-            if (dt.Rows.Count > 0)
+            try
             {
-                if (dropTable == true)
+                string sql = "select * from sys.objects where type='U' and name='" + tableName + "'";
+                DataTable dt = Query(sql);
+                if (dt.Rows.Count > 0)
                 {
-                    sql = "drop table " + tableName + "";   //清除已存在的表
-                    ExecuteNonQuery(sql);
-                }
-                else
-                {
-                    SqlBulkCopy sqlbulkcopy = new SqlBulkCopy(GetSqlConnectionString(), SqlBulkCopyOptions.UseInternalTransaction | SqlBulkCopyOptions.FireTriggers);
-                    sqlbulkcopy.DestinationTableName = tableName;//数据库中的表名
+                    if (dropTable == true)
+                    {
+                        sql = "drop table " + tableName + "";   //清除已存在的表
+                        ExecuteNonQuery(sql);
+                    }
+                    else
+                    {
+                        SqlBulkCopy sqlbulkcopy = new SqlBulkCopy(GetSqlConnectionString(), SqlBulkCopyOptions.UseInternalTransaction);
+                        sqlbulkcopy.DestinationTableName = tableName;//数据库中的表名
 
-                    sqlbulkcopy.WriteToServer(source);
-                    return;
+                        sqlbulkcopy.WriteToServer(source);
+                        return true;
+                    }
                 }
+                ExecuteNonQuery(CreateTable(source, tableName));
+                var sqlBulkCopy = new System.Data.SqlClient.SqlBulkCopy(GetSqlConnectionString(), SqlBulkCopyOptions.FireTriggers);//启动触发器
+                if (useTransaction == true)
+                {
+                    sqlBulkCopy = new System.Data.SqlClient.SqlBulkCopy(GetSqlConnectionString(), SqlBulkCopyOptions.UseInternalTransaction | SqlBulkCopyOptions.FireTriggers); //导入的数据在一个事务中 
+                }
+                sqlBulkCopy.DestinationTableName = tableName;
+                foreach (DataColumn c in source.Columns)
+                {
+                    sqlBulkCopy.ColumnMappings.Add(c.ColumnName, c.ColumnName);
+                }
+                //SqlBulkCopy.BulkCopyTimeout = this.timeout;  //超时时间 
+                sqlBulkCopy.BatchSize = 3000;  //每次传输3000行 
+                sqlBulkCopy.WriteToServer(source);
+                return true;
             }
-            ExecuteNonQuery(CreateTable(source, tableName));
-            var sqlBulkCopy = new System.Data.SqlClient.SqlBulkCopy(GetSqlConnectionString(), SqlBulkCopyOptions.FireTriggers);//启动触发器
-            if (useTransaction == true)
+            catch 
             {
-                sqlBulkCopy = new System.Data.SqlClient.SqlBulkCopy(GetSqlConnectionString(), SqlBulkCopyOptions.UseInternalTransaction | SqlBulkCopyOptions.FireTriggers); //导入的数据在一个事务中 
+                return false;
             }
-            sqlBulkCopy.DestinationTableName = tableName;
-            foreach (DataColumn c in source.Columns)
-            {
-                sqlBulkCopy.ColumnMappings.Add(c.ColumnName, c.ColumnName);
-            }
-            //SqlBulkCopy.BulkCopyTimeout = this.timeout;  //超时时间 
-            sqlBulkCopy.BatchSize = 3000;  //每次传输3000行 
-            sqlBulkCopy.WriteToServer(source);
+
         }
 
         public static string CreateTable(DataTable table, string tableName) 
@@ -147,6 +154,45 @@ namespace Lib.DataBase
             return "Server=localhost\\SQLEXPRESS;Database=master;Trusted_Connection=True;";
         }
 
+
+        public static bool WriteDataToDB(DataWrapper wrapper) 
+        {
+            DataTable onOffRecord = wrapper._onOffRecord;
+            onOffRecord = addPrimaryKey(onOffRecord, new string[] { "ClientName", "MCGS_Time" }, wrapper.clientName);
+
+            DataTable tmpAndMoistData = wrapper._tmpAndMoistData;
+            tmpAndMoistData = addPrimaryKey(tmpAndMoistData, new string[] { "ClientName", "MCGS_Time" }, wrapper.clientName);
+
+            WriteToDataBase(onOffRecord, "开关量存盘_MCGS");
+            WriteToDataBase(tmpAndMoistData, "温湿度数据_MCGS");
+            return true;
+        }
+
+        private static DataTable addPrimaryKey(DataTable dataTable, string[] KeyNames, string ClientName) 
+        {
+            if (dataTable.PrimaryKey.Length != 0)
+            {
+                return dataTable;
+            }
+            else 
+            {
+                DataColumn[] primaryKeys = new DataColumn[KeyNames.Length];
+                for (int i = 0; i < KeyNames.Length; i++)
+                {
+                    if (!dataTable.Columns.Contains(KeyNames[i]))
+                    {
+                        //没有此主键, 创建并添加列
+                        DataColumn newColumn = new DataColumn(KeyNames[i]);
+                        newColumn.DefaultValue = ClientName;
+                        dataTable.Columns.Add(newColumn);
+                    }
+                    primaryKeys[i] = dataTable.Columns[KeyNames[i]];
+                }
+                dataTable.Constraints.Add(new UniqueConstraint("PK", primaryKeys));
+                dataTable.PrimaryKey = primaryKeys;
+                return dataTable;
+            }
+        }
         public int BatchAdd(DataWrapper wrapper) 
         {
             int result = 1;
