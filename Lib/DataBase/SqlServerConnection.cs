@@ -1,25 +1,114 @@
 ﻿using Lib.DataBase.Model;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 
 namespace Lib.DataBase
 {
-    public class SqlServerConnection
+    public sealed class SqlServerConnection
     {
+        private static SqlServerConnection instance = null;
+        private static readonly object padlock = new object();
+        private string connectionName = "SqlServerPath";
+        private string connectionString;
+        private Configuration configuration;
+        private ConnectionStringSettings mySettings;
 
+        public bool IsConnected = false;
+
+        public static SqlServerConnection GetInstance(string file) 
+        {
+            if (instance == null) 
+            {
+                lock (padlock) 
+                {
+                    if (instance == null) 
+                    {
+                        instance = new SqlServerConnection(file);
+                    }
+                }
+            }
+            return instance;
+        }
+        public SqlServerConnection(string file) 
+        {
+            configuration = ConfigurationManager.OpenExeConfiguration(file);
+            if (configuration.ConnectionStrings.ConnectionStrings[connectionName] != null) 
+            {
+                connectionString = System.Text.RegularExpressions.Regex.Unescape(configuration.ConnectionStrings.ConnectionStrings[connectionName].ConnectionString);
+                if (TestDataBaseConnection())
+                {
+                    IsConnected = true;
+                }
+            }
+        }
+
+        public bool SetDataBaseConnection(string server, string database, string uid, string pwd) 
+        {
+            string connString = CreateConnectionString(server, database, uid, pwd);
+            if (configuration.ConnectionStrings.ConnectionStrings[connectionName] != null)
+            {
+                configuration.ConnectionStrings.ConnectionStrings.Remove(connectionName);
+            }
+            connectionString = System.Text.RegularExpressions.Regex.Unescape(connString);
+            if (TestDataBaseConnection())
+            {
+                IsConnected = true;
+                mySettings = new ConnectionStringSettings(connectionName, connString);
+                configuration.ConnectionStrings.ConnectionStrings.Add(mySettings);
+                configuration.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection("connectionStrings");
+                return true;
+            }
+            else 
+            {
+                return false;
+            }
+        }
+
+        public string CreateConnectionString(string server, string database, string uid = "", string pwd= "")
+        {
+            //Server=localhost\\SQLEXPRESS;Database=master;Trusted_Connection=True;uid=sa;pwd=123
+            string result = "Server=" + (server) + ";Database=" + database;
+            if (uid != "" && pwd != "")
+            {
+                result += ";uid=" + uid;
+                result += ";pwd=" + pwd;
+            }
+            else 
+            {
+                result += ";Trusted_Connection=True;";
+            }
+            return result;
+        }
+
+        public bool TestDataBaseConnection() 
+        {            
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(connectionString)) 
+                {
+                    sqlConnection.Open();
+                    sqlConnection.Close();
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
         /// <summary>
         /// 将DataTable写入数据库的表中
         /// </summary>
         /// <param name="source">数据源DataTable</param>
         /// <param name="tableName">数据目标的表名</param>
         /// <param name="useTransaction">操作过程是否使用事务</param>
-        /// <param name="databaseConnString">数据库连接字符串</param>
         /// <param name="dropTable">删除DB中已存在的表(并自动新建表)</param>
-        /// <param name="primaryKeys">主键的列名</param>github
-        private static bool WriteToDataBase(DataTable source, string tableName, bool useTransaction = true, bool dropTable = false)
+        private bool WriteToDataBase(DataTable source, string tableName, bool useTransaction = true, bool dropTable = false)
         {
             try
             {
@@ -112,7 +201,7 @@ namespace Lib.DataBase
             return result;
         }
 
-        public static int ExecuteNonQuery(string sql)
+        public int ExecuteNonQuery(string sql)
         {
             using (SqlConnection conn = new SqlConnection(GetSqlConnectionString()))
             {
@@ -125,7 +214,7 @@ namespace Lib.DataBase
             }
         }
 
-        private static DataTable Query(string sql) 
+        private DataTable Query(string sql) 
         {
             SqlConnection sqlConnection = new SqlConnection(GetSqlConnectionString());
             DataSet dataSet = new DataSet();
@@ -149,23 +238,32 @@ namespace Lib.DataBase
             return dataSet.Tables[0];
         }
 
-        private static string GetSqlConnectionString() 
+        public string GetSqlConnectionString() 
         {
-            return "Server=localhost\\SQLEXPRESS;Database=master;Trusted_Connection=True;";
+            return connectionString;
         }
 
 
-        public static bool WriteDataToDB(DataWrapper wrapper) 
+        public bool WriteDataToDB(DataWrapper wrapper) 
         {
-            DataTable onOffRecord = wrapper._onOffRecord;
-            onOffRecord = addPrimaryKey(onOffRecord, new string[] { "ClientName", "MCGS_Time" }, wrapper.clientName);
+            try
+            {
+                DataTable onOffRecord = wrapper._onOffRecord;
+                onOffRecord = addPrimaryKey(onOffRecord, new string[] { "ClientName", "MCGS_Time" }, wrapper.clientName);
 
-            DataTable tmpAndMoistData = wrapper._tmpAndMoistData;
-            tmpAndMoistData = addPrimaryKey(tmpAndMoistData, new string[] { "ClientName", "MCGS_Time" }, wrapper.clientName);
+                DataTable tmpAndMoistData = wrapper._tmpAndMoistData;
+                tmpAndMoistData = addPrimaryKey(tmpAndMoistData, new string[] { "ClientName", "MCGS_Time" }, wrapper.clientName);
 
-            WriteToDataBase(onOffRecord, "开关量存盘_MCGS");
-            WriteToDataBase(tmpAndMoistData, "温湿度数据_MCGS");
-            return true;
+                WriteToDataBase(onOffRecord, "开关量存盘_MCGS");
+                WriteToDataBase(tmpAndMoistData, "温湿度数据_MCGS");
+                return true;
+            }
+            catch 
+            {
+                return false;
+            }
+
+            
         }
 
         private static DataTable addPrimaryKey(DataTable dataTable, string[] KeyNames, string ClientName) 

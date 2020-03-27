@@ -11,16 +11,19 @@ namespace AccessTransferServer
         System.Timers.Timer timer;
         public Receiver()
         {
-            server = new Server();
+            server = new Server(System.Windows.Forms.Application.ExecutablePath);
             timer = new System.Timers.Timer();
             InitializeComponent();
             Control.CheckForIllegalCrossThreadCalls = false;
             this.FormClosing += new FormClosingEventHandler(this.Close);
-
+            if (server.sqlServerConnection.IsConnected) 
+            {
+                labelDataBaseConnection.Text = "数据库已连接";
+            }
             timer.Enabled = true;
             timer.Interval = 2000;
-            timer.Start();
             timer.Elapsed += new System.Timers.ElapsedEventHandler(FreshMessage);
+            timer.Start();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -29,23 +32,18 @@ namespace AccessTransferServer
             server.SetReceiveMessage();
             if (server.connect && server.receiveMessage)
             {
-                richTextBox.AppendText("开始监听:" + "\r\n");
+                richTextBox.AppendText("\r\n" + "开始监听:" + "\r\n");
                 server.Start();
             }
             else
             {
-                richTextBox.AppendText("\r\n" + "结束监听:");
+                richTextBox.AppendText("\r\n" + "结束监听:" + "\r\n");
             }
         }
 
         private void FreshMessage(object source, ElapsedEventArgs e)
         {
             string text = server.ShowMessage();
-            string connectionText;
-            if (server.ShowConnectionMessage(out connectionText)) 
-            {
-                richTextBox.AppendText("\r\n" + connectionText);
-            }
             if (text != "")
             {
                 richTextBox.AppendText("\r\n" + text);
@@ -69,6 +67,16 @@ namespace AccessTransferServer
             }
         }
 
+        private void buttonDataBaseConfig_Click(object sender, EventArgs e)
+        {
+            SqlServerConfig sqlServerConfig = new SqlServerConfig(System.Windows.Forms.Application.ExecutablePath);
+            sqlServerConfig.Show();
+            sqlServerConfig.FormClosed += DataBaseConnectionReminder;
+        }
 
+        private void DataBaseConnectionReminder(object sender, EventArgs e)
+        {
+            labelDataBaseConnection.Text = "数据库已连接";
+        }
     }
 }

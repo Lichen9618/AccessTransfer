@@ -15,11 +15,13 @@ namespace Lib.DataTransfer
         private IPAddress _ipAddress;
         private int _port;
         private Thread acceptThread;
+        private string configPath;
 
         string TransferMessage;
-        string ConnectionMessage;
         public bool connect = false;
         public bool receiveMessage = false;
+        public SqlServerConnection sqlServerConnection;
+
         Socket serverSock;
         List<Socket> clientList = new List<Socket>();
 
@@ -31,8 +33,9 @@ namespace Lib.DataTransfer
         {
             receiveMessage = !receiveMessage;
         }
-        public Server()
+        public Server(string path)
         {
+            SetConfigPath(path);
             //IPv4的地址模式. 流式数据传输
             if (!int.TryParse(ConfigurationManager.AppSettings["Port"], out _port))
             {
@@ -42,6 +45,7 @@ namespace Lib.DataTransfer
             {
                 throw new Exception("Ip地址格式错误");
             }
+            sqlServerConnection = SqlServerConnection.GetInstance(configPath);
             serverSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPEndPoint point = new IPEndPoint(_ipAddress, _port);
             serverSock.Bind(point);
@@ -59,23 +63,37 @@ namespace Lib.DataTransfer
             }
         }
 
+        public void SetConfigPath(string path) 
+        {
+            this.configPath = path;
+        }
+
         public void ReceiveMessage(object Message)
         {
             while (receiveMessage)
             {
                 Socket client = Message as Socket;
-                byte[] messageBytes = new byte[1024 * 1024];
+                byte[] messageBytes = new byte[1024 * 1024];//内存上开辟1MB的空间, 准备接收客户端数据
                 try
                 {
                     int num = client.Receive(messageBytes);
                     if (num != 0)
                     {
                         string message = Encoding.UTF8.GetString(messageBytes);
-                        DataWrapper wrapper = DataWrapper.Deserialize(message);
-                        SqlServerConnection.WriteDataToDB(wrapper);
-                        AnalysisMessgae(wrapper);
-                        ResponseMessage response = new ResponseMessage(wrapper.recordCount);
-                        client.Send(response.SendData());
+                        try//尝试序列化收到的消息, 并将消息处理后写入数据库
+                        {
+                            DataWrapper wrapper = DataWrapper.Deserialize(message);
+                            if (sqlServerConnection.WriteDataToDB(wrapper)) 
+                            {
+                                AnalysisMessgae(wrapper);//成功处理消息, 将响应信息发回给客户端
+                                ResponseMessage response = new ResponseMessage(wrapper.recordCount);
+                                client.Send(response.SendData());
+                            }
+                        }
+                        catch 
+                        {
+
+                        }
                     }
                     IPEndPoint clientPoint = client.RemoteEndPoint as IPEndPoint;
                     //对messageBytes进行进一步处理                   
@@ -99,7 +117,7 @@ namespace Lib.DataTransfer
         public string CheckConnection() 
         {
             string result = "";
-            if (clientList.Count == 0) 
+            if (clientList.Count == 0)
             {
                 return result;
             }
@@ -107,7 +125,7 @@ namespace Lib.DataTransfer
             {
                 return clientList[0].RemoteEndPoint.ToString();
             }
-            else 
+            else
             {
                 foreach (var client in clientList)
                 {
@@ -130,21 +148,6 @@ namespace Lib.DataTransfer
             string result = TransferMessage;
             TransferMessage = "";
             return result;
-        }
-
-        public bool ShowConnectionMessage(out string result)
-        {
-            if (ConnectionMessage == "")
-            {
-                result = "";
-                return false;
-            }
-            else 
-            {
-                result = ConnectionMessage;
-                ConnectionMessage = "";
-                return true;
-            }
         }
 
         public void Start()

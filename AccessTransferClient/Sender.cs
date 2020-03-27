@@ -1,8 +1,12 @@
 ﻿using Lib.DataBase;
+using Lib.DataBase.Model;
 using Lib.DataTransfer;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Timers;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace AccessTransferClient
 {
@@ -10,25 +14,30 @@ namespace AccessTransferClient
     {
         private Client client;
         private AccessConnection accessConnection;
+        System.Timers.Timer timer;
         public Sender()
         {
             InitializeComponent();
+            LoadSetting();
+            Control.CheckForIllegalCrossThreadCalls = false;
             try
             {
-                this.client = new Client();
+                this.client = Client.GetInstance();
                 labelServerConnected.Text = "是";
             }
             catch (Exception e)
             {
+                MessageBox.Show(e.Message);
                 labelServerConnected.Text = "否";
             }
             accessConnection = new AccessConnection(System.Windows.Forms.Application.ExecutablePath);
             SetDataBaseConnectionLabel(accessConnection.OpenConnection());
+            TimeStart();
         }
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
-            if (!(client is null))
+            if (client.ServerConntected)
             {
                 client.SetSend();
                 if (client.StartToSend == true)
@@ -39,24 +48,53 @@ namespace AccessTransferClient
                     }
                     else 
                     {
-                        client.SetDataPickInterval();
+                        MessageBox.Show("请输入间隔时间");
+                        return;
                     }                    
                     client.SetAcceesConnection(accessConnection);
                     GetProcessPattern();
-                    client.Start();
+                    client.Start();                    
                     SetTheButton(false);
                     return;
                 }
                 else 
                 {
                     client.End();
+                    SetTheButton(true);
                 }
             }
             else 
             {
+                client.End();
                 MessageBox.Show("无法连接至服务端,请检查");
             }
             SetTheButton(true);
+        }
+
+        private void TimeStart()       
+        {
+            timer = new System.Timers.Timer();
+            timer.Enabled = true;
+            timer.Interval = 3000;
+            timer.Elapsed += new System.Timers.ElapsedEventHandler(FreshMessage);
+            timer.Start();
+        }
+
+        private void FreshMessage(object source, ElapsedEventArgs e)
+        {
+            List<string> results = client.showMessage();
+            if (!(results is null))
+            {
+                foreach (string item in results)
+                {
+                    richTextBoxMessage.AppendText("\r\n" + item + "\r\n");
+                }
+            }
+            if (!client.CheckConnection()) 
+            {
+                labelServerConnected.Text = "否";
+                richTextBoxMessage.AppendText("\r\n" + DateTime.Now.ToString() + " 断开连接" + "\r\n");
+            }
         }
 
         private void SetTheButton(bool state) 
@@ -64,10 +102,12 @@ namespace AccessTransferClient
             groupBox1.Enabled = state;
             buttonDataBaseChoose.Enabled = state;
             textBoxInterval.Enabled = state;
+            buttonConnectToServer.Enabled = state;
         }
 
         private void Close(object sender, FormClosingEventArgs e)
         {
+            SaveSetting();
             DialogResult dr = MessageBox.Show("是否退出?", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (dr == DialogResult.OK)
             {
@@ -99,10 +139,11 @@ namespace AccessTransferClient
             SetDataBaseConnectionLabel(accessConnection.OpenConnection());
         }
 
-        private void SetDataBaseConnectionLabel(bool IsConntected) 
+        private void SetDataBaseConnectionLabel(string dataBasePath) 
         {
-            if (IsConntected)
+            if (dataBasePath != "")
             {
+                labelDataBaseName.Text = dataBasePath;
                 labelDataBaseConnected.Text = "是";
             }
             else 
@@ -113,35 +154,76 @@ namespace AccessTransferClient
 
         private void buttonConnectToServer_Click(object sender, EventArgs e)
         {
-            try
+            if (client.ServerConntected == false)
             {
-                this.client = new Client();
-            }
-            catch (Exception exception) 
-            {
-                MessageBox.Show(exception.Message) ;
-            }            
-        }
-
-        private void GetProcessPattern() 
-        {
-            if (radioButtonMaxValue.Checked)
-            {
-                client.processPattern = Lib.DataBase.Model.ProcessPattern.Max;
-            }
-            else if (radioButtonMinValue.Checked)
-            {
-                client.processPattern = Lib.DataBase.Model.ProcessPattern.Min;
-            }
-            else if (radioButtonAverage.Checked)
-            {
-                client.processPattern = Lib.DataBase.Model.ProcessPattern.Average;
+                MessageBox.Show(client.ConnectServer());
             }
             else 
             {
-                client.processPattern = Lib.DataBase.Model.ProcessPattern.Latest;
+                MessageBox.Show("已连接服务器,请勿重复连接");
             }
+                     
+        }
 
+        private ProcessPattern GetProcessPattern() 
+        {
+            ProcessPattern pattern;
+            if (radioButtonMaxValue.Checked)
+            {
+                pattern = Lib.DataBase.Model.ProcessPattern.Max;
+            }
+            else if (radioButtonMinValue.Checked)
+            {
+                pattern = Lib.DataBase.Model.ProcessPattern.Min;
+            }
+            else if (radioButtonAverage.Checked)
+            {
+                pattern = Lib.DataBase.Model.ProcessPattern.Average;
+            }
+            else 
+            {
+                pattern = Lib.DataBase.Model.ProcessPattern.Latest;
+            }
+            if (!(client is null)) 
+            {
+                client.processPattern = pattern;
+            }
+            return pattern;
+        }
+
+        private void SaveSetting() 
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(System.Windows.Forms.Application.ExecutablePath);
+            int PickInterval;
+            if (int.TryParse(textBoxInterval.Text,out PickInterval))
+            {                
+                config.AppSettings.Settings["PickInterval"].Value = (PickInterval).ToString();
+            }
+            config.AppSettings.Settings["ProcessPattern"].Value = GetProcessPattern().ToString();
+            config.Save();
+        }
+
+        private void LoadSetting() 
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(System.Windows.Forms.Application.ExecutablePath);
+            textBoxInterval.Text = config.AppSettings.Settings["PickInterval"].Value;
+            string pattern = config.AppSettings.Settings["ProcessPattern"].Value;
+            if (pattern == "Max")
+            {
+                radioButtonMaxValue.Checked = true;
+            }
+            else if (pattern == "Min")
+            {
+                radioButtonMinValue.Checked = true;
+            }
+            else if (pattern == "Average")
+            {
+                radioButtonAverage.Checked = true;
+            }
+            else if (pattern == "Latest") 
+            {
+                radioButtonLatest.Checked = true;
+            }
         }
     }
 }

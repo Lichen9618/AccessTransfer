@@ -66,7 +66,7 @@ namespace Lib.DataBase
             return "Provider=" + provider + ";Data Source=" + connectionString;
         }
 
-        public bool OpenConnection()
+        public string OpenConnection()
         {
             try
             {
@@ -77,11 +77,7 @@ namespace Lib.DataBase
             catch
             {
             }
-            //if (IsConnected)
-            //{
-            //    RefreshData();
-            //}
-            return IsConnected;
+            return configuration.ConnectionStrings.ConnectionStrings[connectionName].ConnectionString;
         }
 
         public void CloseConnection()

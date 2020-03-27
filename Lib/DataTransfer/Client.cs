@@ -1,6 +1,7 @@
 ﻿using Lib.DataBase;
 using Lib.DataBase.Model;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Net;
@@ -11,20 +12,45 @@ using System.Threading;
 
 namespace Lib.DataTransfer
 {
-    public class Client
+    public sealed class Client
     {
+        private static Client instance = null;
+        private static readonly object padlock = new object();
         private IPAddress _ipAddress;
         private int _port;
         private int _interval;
         private string _clientName;
+        private List<string> _currentState;
 
         public ProcessPattern processPattern;
         public AccessConnection accessConnection;
         public DataProcess dataProcess;
+        public bool ServerConntected = false;
         public bool StartToSend = false;
         Socket clientSock;
         Thread thread;
+
+        public static Client GetInstance()
+        {
+            if (instance == null)
+            {
+                lock (padlock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new Client();
+                    }
+                }
+            }
+            return instance;
+        }
+
         public Client()
+        {
+            ConnectServer();            
+        }
+
+        public string ConnectServer()
         {
             if (!int.TryParse(ConfigurationManager.AppSettings["Port"], out _port))
             {
@@ -41,15 +67,17 @@ namespace Lib.DataTransfer
             {
                 IPEndPoint point = new IPEndPoint(_ipAddress, _port);
                 clientSock.Connect(point);
+                ServerConntected = true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new Exception("服务端已断开");
+                return e.Message;
             }
+            return "连接成功";
         }
 
 
-        public bool SetAcceesConnection(AccessConnection connection) 
+        public bool SetAcceesConnection(AccessConnection connection)
         {
             this.accessConnection = connection;
             return true;
@@ -69,7 +97,7 @@ namespace Lib.DataTransfer
 
         public void End()
         {
-            Environment.Exit(0);
+            StartToSend = false;
         }
 
         public void SendMessage()
@@ -96,6 +124,7 @@ namespace Lib.DataTransfer
                                 ResponseMessage response = ResponseMessage.Deserialize(message);
                                 if (response.Length == accessConnection.data.recordCount)
                                 {
+                                    _currentState.Add(response.Time.ToString() + "|成功发送消息");
                                     accessConnection.ChangeTimeStamp();
                                 }
                             }
@@ -104,44 +133,50 @@ namespace Lib.DataTransfer
                                 throw new Exception("未收到返回确认");
                             };
                         }
-                        else 
+                        else
                         {
                             System.Threading.Thread.Sleep(_interval * 1000);
                         }
                     }
                 }
-                catch (Exception)
+                catch
                 {
-                    throw new Exception("连接已断开");
+                    ServerConntected = false;
+                    StartToSend = false;
                 }
             }
-            else 
+            else
             {
                 throw new Exception("数据库连接断开");
             }
         }
 
-        public void SendTestMessage() 
+        public bool CheckConnection() 
         {
             try
             {
-                while (StartToSend) 
-                {
-                    string message = "Message from client: " + _clientName;
-                    clientSock.Send(Encoding.UTF8.GetBytes(message));
-                    System.Threading.Thread.Sleep(_interval * 1000);
-                }
+                clientSock.Send(new byte[] { 0x00 });
+                return true;
             }
-            catch
+            catch 
             {
-                throw new Exception("连接已断开");
+                ServerConntected = false;
+                return false;
             }
+            
         }
 
         public bool SetDataPickInterval(int interval = 3)
         {
             this._interval = interval;
             return true;
+        }
+
+        public List<string> showMessage() 
+        {
+            List<string> result = _currentState;
+            _currentState = new List<string>();
+            return result;
         }
     }
 }

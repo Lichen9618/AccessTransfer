@@ -33,14 +33,18 @@ namespace AccessTransferServer
             this.button1 = new System.Windows.Forms.Button();
             this.richTextBox = new System.Windows.Forms.RichTextBox();
             this.richTextBoxConnectionPool = new System.Windows.Forms.RichTextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.buttonDataBaseConfig = new System.Windows.Forms.Button();
+            this.labelDataBaseConnection = new System.Windows.Forms.Label();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(245, 307);
-            this.button1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button1.Location = new System.Drawing.Point(163, 205);
+            this.button1.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(145, 43);
+            this.button1.Size = new System.Drawing.Size(97, 29);
             this.button1.TabIndex = 0;
             this.button1.Text = "启动/停止接受";
             this.button1.UseVisualStyleBackColor = true;
@@ -48,32 +52,70 @@ namespace AccessTransferServer
             // 
             // richTextBox
             // 
-            this.richTextBox.Location = new System.Drawing.Point(19, 17);
-            this.richTextBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.richTextBox.Location = new System.Drawing.Point(13, 11);
+            this.richTextBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.richTextBox.Name = "richTextBox";
-            this.richTextBox.Size = new System.Drawing.Size(371, 260);
+            this.richTextBox.Size = new System.Drawing.Size(249, 175);
             this.richTextBox.TabIndex = 1;
             this.richTextBox.Text = "";
             // 
             // richTextBoxConnectionPool
             // 
-            this.richTextBoxConnectionPool.Location = new System.Drawing.Point(407, 17);
+            this.richTextBoxConnectionPool.Location = new System.Drawing.Point(271, 11);
+            this.richTextBoxConnectionPool.Margin = new System.Windows.Forms.Padding(2);
             this.richTextBoxConnectionPool.Name = "richTextBoxConnectionPool";
-            this.richTextBoxConnectionPool.Size = new System.Drawing.Size(230, 260);
+            this.richTextBoxConnectionPool.Size = new System.Drawing.Size(155, 175);
             this.richTextBoxConnectionPool.TabIndex = 2;
             this.richTextBoxConnectionPool.Text = "";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.buttonDataBaseConfig);
+            this.groupBox1.Controls.Add(this.labelDataBaseConnection);
+            this.groupBox1.Location = new System.Drawing.Point(13, 249);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox1.Size = new System.Drawing.Size(412, 106);
+            this.groupBox1.TabIndex = 3;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "数据库连接状态";
+            // 
+            // buttonDataBaseConfig
+            // 
+            this.buttonDataBaseConfig.Location = new System.Drawing.Point(23, 63);
+            this.buttonDataBaseConfig.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonDataBaseConfig.Name = "buttonDataBaseConfig";
+            this.buttonDataBaseConfig.Size = new System.Drawing.Size(100, 23);
+            this.buttonDataBaseConfig.TabIndex = 1;
+            this.buttonDataBaseConfig.Text = "配置数据库";
+            this.buttonDataBaseConfig.UseVisualStyleBackColor = true;
+            this.buttonDataBaseConfig.Click += new System.EventHandler(this.buttonDataBaseConfig_Click);
+            // 
+            // labelDataBaseConnection
+            // 
+            this.labelDataBaseConnection.AutoSize = true;
+            this.labelDataBaseConnection.Location = new System.Drawing.Point(30, 34);
+            this.labelDataBaseConnection.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelDataBaseConnection.Name = "labelDataBaseConnection";
+            this.labelDataBaseConnection.Size = new System.Drawing.Size(77, 12);
+            this.labelDataBaseConnection.TabIndex = 0;
+            this.labelDataBaseConnection.Text = "数据库未连接";
+            // 
             // Receiver
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(649, 380);
+            this.ClientSize = new System.Drawing.Size(433, 369);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.richTextBoxConnectionPool);
             this.Controls.Add(this.richTextBox);
             this.Controls.Add(this.button1);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.Name = "Receiver";
             this.Text = "Form1";
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -83,6 +125,9 @@ namespace AccessTransferServer
         private System.Windows.Forms.Button button1;
         public System.Windows.Forms.RichTextBox richTextBox;
         private RichTextBox richTextBoxConnectionPool;
+        private GroupBox groupBox1;
+        private Button buttonDataBaseConfig;
+        private Label labelDataBaseConnection;
     }
 }
 
