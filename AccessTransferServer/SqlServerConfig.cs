@@ -23,20 +23,27 @@ namespace AccessTransferServer
 
         private void buttonTestConnection_Click(object sender, EventArgs e)
         {
-            try
+            if (textBoxServer.Text == "" || textBoxDataBase.Text == "")
             {
-                using (SqlConnection sqlConnection = new SqlConnection
-                    (System.Text.RegularExpressions.Regex.Unescape
-                    (connection.CreateConnectionString
-                    (textBoxServer.Text, textBoxDataBase.Text, textBoxuid.Text, textBoxpwd.Text))))
-                {
-                    sqlConnection.Open();
-                    MessageBox.Show("连接成功!");
-                }
+                MessageBox.Show("Server与DataBase不能为空!");
             }
-            catch
+            else 
             {
-                MessageBox.Show("连接失败!");
+                try
+                {
+                    using (SqlConnection sqlConnection = new SqlConnection
+                        (System.Text.RegularExpressions.Regex.Unescape
+                        (connection.CreateConnectionString
+                        (textBoxServer.Text, textBoxDataBase.Text, textBoxuid.Text, textBoxpwd.Text))))
+                    {
+                        sqlConnection.Open();
+                        MessageBox.Show("连接成功!");
+                    }
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show(exception.Message);
+                }
             }
         }
 

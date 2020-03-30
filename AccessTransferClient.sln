@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessTransferServer", "Acc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib", "Lib\Lib.csproj", "{D2C246DB-A554-4654-8497-40E2E3867EC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTests", "LibTests1\LibTests.csproj", "{F42FAB8A-8890-4F3A-AA7A-93F5A357169D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,14 +41,6 @@ Global
 		{D2C246DB-A554-4654-8497-40E2E3867EC3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2C246DB-A554-4654-8497-40E2E3867EC3}.Release|x86.ActiveCfg = Release|x86
 		{D2C246DB-A554-4654-8497-40E2E3867EC3}.Release|x86.Build.0 = Release|x86
-		{F42FAB8A-8890-4F3A-AA7A-93F5A357169D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F42FAB8A-8890-4F3A-AA7A-93F5A357169D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F42FAB8A-8890-4F3A-AA7A-93F5A357169D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F42FAB8A-8890-4F3A-AA7A-93F5A357169D}.Debug|x86.Build.0 = Debug|Any CPU
-		{F42FAB8A-8890-4F3A-AA7A-93F5A357169D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F42FAB8A-8890-4F3A-AA7A-93F5A357169D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F42FAB8A-8890-4F3A-AA7A-93F5A357169D}.Release|x86.ActiveCfg = Release|Any CPU
-		{F42FAB8A-8890-4F3A-AA7A-93F5A357169D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

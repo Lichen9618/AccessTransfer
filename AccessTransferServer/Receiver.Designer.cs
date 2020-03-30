@@ -113,7 +113,7 @@ namespace AccessTransferServer
             this.Controls.Add(this.button1);
             this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.Name = "Receiver";
-            this.Text = "Form1";
+            this.Text = "Receiver";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);

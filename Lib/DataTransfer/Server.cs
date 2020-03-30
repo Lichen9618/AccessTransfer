@@ -132,7 +132,7 @@ namespace Lib.DataTransfer
                     try
                     {
                         client.Send(new byte[] { 0x00 });
-                        result += client.RemoteEndPoint.ToString();
+                        result += client.RemoteEndPoint.ToString() + "\r\n";
                     }
                     catch (SocketException e)
                     {

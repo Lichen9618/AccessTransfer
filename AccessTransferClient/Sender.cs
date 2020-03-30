@@ -30,7 +30,7 @@ namespace AccessTransferClient
                 MessageBox.Show(e.Message);
                 labelServerConnected.Text = "否";
             }
-            accessConnection = new AccessConnection(System.Windows.Forms.Application.ExecutablePath);
+            accessConnection = AccessConnection.GetInsantance((System.Windows.Forms.Application.ExecutablePath));
             SetDataBaseConnectionLabel(accessConnection.OpenConnection());
             TimeStart();
         }
@@ -68,7 +68,6 @@ namespace AccessTransferClient
                 client.End();
                 MessageBox.Show("无法连接至服务端,请检查");
             }
-            SetTheButton(true);
         }
 
         private void TimeStart()       
@@ -113,7 +112,7 @@ namespace AccessTransferClient
             {
                 if (!(client is null)) 
                 {
-                    if (client.accessConnection.IsConnected == true)
+                    if (!(client.accessConnection is null))
                     {
                         client.accessConnection.CloseConnection();
                     }

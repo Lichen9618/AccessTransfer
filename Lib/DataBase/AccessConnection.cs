@@ -6,8 +6,10 @@ using System.Data.OleDb;
 
 namespace Lib.DataBase
 {
-    public class AccessConnection
+    public sealed class AccessConnection
     {
+        private static AccessConnection instance = null;
+        private static readonly object padlock = new object();
         private string _dataBasePath;
         private static string _providerName = "Microsoft.Jet.OLEDB.4.0";
         private string connectionName = "AccessMDBPath";
@@ -21,27 +23,48 @@ namespace Lib.DataBase
         public DataWrapper data;
         public DataProcess process;
 
+        public static AccessConnection GetInsantance(string file = "") 
+        {
+            if (instance == null)
+            {
+                lock (padlock) 
+                {
+                    if (instance == null) 
+                    {
+                        instance = new AccessConnection(file);
+                    }
+                }
+            }
+            return instance;
 
+        }
 
         public AccessConnection(string file)
         {
-            data = new DataWrapper();
-            try
+            if (file == "")
             {
-                configuration = ConfigurationManager.OpenExeConfiguration(file);
-                if (configuration.ConnectionStrings.ConnectionStrings[connectionName] != null)
+
+            }
+            else
+            {
+                data = new DataWrapper();
+                try
                 {
-                    _dataBasePath = SetDataBasePath
-                        (configuration.ConnectionStrings.ConnectionStrings[connectionName].ProviderName,
-                        configuration.ConnectionStrings.ConnectionStrings[connectionName].ConnectionString);
+                    configuration = ConfigurationManager.OpenExeConfiguration(file);
+                    if (configuration.ConnectionStrings.ConnectionStrings[connectionName] != null)
+                    {
+                        _dataBasePath = SetDataBasePath
+                            (configuration.ConnectionStrings.ConnectionStrings[connectionName].ProviderName,
+                            configuration.ConnectionStrings.ConnectionStrings[connectionName].ConnectionString);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("配置文件加载失败");
                 }
 
             }
-            catch(Exception e)
-            {
-                throw new Exception("配置文件加载失败");
-            }
-
         }
 
         //Provider=Microsoft.Jet.OLEDB.4.0;Data Source=D:\project\cui\2019-12-15D(1).MDB
