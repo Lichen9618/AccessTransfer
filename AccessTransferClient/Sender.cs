@@ -55,17 +55,21 @@ namespace AccessTransferClient
                     GetProcessPattern();
                     client.Start();                    
                     SetTheButton(false);
+                    timer.Start();
                     return;
                 }
                 else 
                 {
                     client.End();
+                    timer.Stop();
                     SetTheButton(true);
                 }
             }
             else 
             {
                 client.End();
+                timer.Stop();
+                SetTheButton(true);
                 MessageBox.Show("无法连接至服务端,请检查");
             }
         }
@@ -86,13 +90,13 @@ namespace AccessTransferClient
             {
                 foreach (string item in results)
                 {
-                    richTextBoxMessage.AppendText("\r\n" + item + "\r\n");
+                    richTextBoxMessage.Text = richTextBoxMessage.Text.Insert(0, "\r\n" + item + "\r\n");
                 }
             }
             if (!client.CheckConnection()) 
             {
                 labelServerConnected.Text = "否";
-                richTextBoxMessage.AppendText("\r\n" + DateTime.Now.ToString() + " 断开连接" + "\r\n");
+                richTextBoxMessage.Text = richTextBoxMessage.Text.Insert(0, "\r\n" + DateTime.Now.ToString() + " 断开连接" + "\r\n");
             }
         }
 
@@ -156,6 +160,10 @@ namespace AccessTransferClient
             if (client.ServerConntected == false)
             {
                 MessageBox.Show(client.ConnectServer());
+                if (client.ServerConntected == true) 
+                {
+                    labelServerConnected.Text = "是";
+                }
             }
             else 
             {

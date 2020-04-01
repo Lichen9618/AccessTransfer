@@ -115,23 +115,36 @@ namespace Lib.DataTransfer
                         {
                             byte[] sendMessageBytes = accessConnection.data.SendData();
                             clientSock.Send(sendMessageBytes);
-                            System.Threading.Thread.Sleep(_interval * 1000);
-                            try
+                            for (int i = 0; i < 3; i++)
                             {
-                                byte[] messageBytes = new byte[100 * 1024];
-                                clientSock.Receive(messageBytes);
-                                string message = Encoding.UTF8.GetString(messageBytes);
-                                ResponseMessage response = ResponseMessage.Deserialize(message);
-                                if (response.Length == accessConnection.data.recordCount)
+                                System.Threading.Thread.Sleep(_interval * 1000);
+                                try
                                 {
-                                    _currentState.Add(response.Time.ToString() + "|成功发送消息");
-                                    accessConnection.ChangeTimeStamp();
+                                    byte[] messageBytes = new byte[100 * 1024];
+                                    clientSock.Receive(messageBytes);
+                                    string message = Encoding.UTF8.GetString(messageBytes);
+                                    ResponseMessage response = ResponseMessage.Deserialize(message);
+                                    if (response.Length == accessConnection.data.recordCount)
+                                    {
+                                        _currentState.Add(response.Time.ToString() + "|成功发送消息");
+                                        accessConnection.ChangeTimeStamp();
+                                        break;
+                                    }                                     
                                 }
+                                catch
+                                {
+                                    if (i == 3)
+                                    {
+                                        _currentState.Add("发送失败超过3次, 主动与服务端断开连接");
+                                        throw new Exception("未收到返回确认");
+                                    }
+                                    else 
+                                    {
+                                        _currentState.Add(DateTime.Now.ToString() + "|发送消息失败, 进行第" + (i + 1).ToString() + "次重试");
+                                        continue;
+                                    }               
+                                };
                             }
-                            catch (Exception e)
-                            {
-                                throw new Exception("未收到返回确认");
-                            };
                         }
                         else
                         {

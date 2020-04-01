@@ -42,6 +42,7 @@ namespace AccessTransferClient
             this.label = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.labelDataBaseName = new System.Windows.Forms.Label();
             this.labelDataBaseConnected = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.labelServerConnected = new System.Windows.Forms.Label();
@@ -50,7 +51,6 @@ namespace AccessTransferClient
             this.groupBoxMessage = new System.Windows.Forms.GroupBox();
             this.richTextBoxMessage = new System.Windows.Forms.RichTextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.labelDataBaseName = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBoxMessage.SuspendLayout();
@@ -182,6 +182,14 @@ namespace AccessTransferClient
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "连接状态";
             // 
+            // labelDataBaseName
+            // 
+            this.labelDataBaseName.AutoSize = true;
+            this.labelDataBaseName.Location = new System.Drawing.Point(28, 127);
+            this.labelDataBaseName.Name = "labelDataBaseName";
+            this.labelDataBaseName.Size = new System.Drawing.Size(0, 18);
+            this.labelDataBaseName.TabIndex = 4;
+            // 
             // labelDataBaseConnected
             // 
             this.labelDataBaseConnected.AutoSize = true;
@@ -233,9 +241,9 @@ namespace AccessTransferClient
             // 
             this.groupBoxMessage.Controls.Add(this.richTextBoxMessage);
             this.groupBoxMessage.Location = new System.Drawing.Point(44, 524);
-            this.groupBoxMessage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBoxMessage.Margin = new System.Windows.Forms.Padding(4);
             this.groupBoxMessage.Name = "groupBoxMessage";
-            this.groupBoxMessage.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBoxMessage.Padding = new System.Windows.Forms.Padding(4);
             this.groupBoxMessage.Size = new System.Drawing.Size(562, 126);
             this.groupBoxMessage.TabIndex = 8;
             this.groupBoxMessage.TabStop = false;
@@ -244,19 +252,12 @@ namespace AccessTransferClient
             // richTextBoxMessage
             // 
             this.richTextBoxMessage.Location = new System.Drawing.Point(9, 33);
-            this.richTextBoxMessage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.richTextBoxMessage.Margin = new System.Windows.Forms.Padding(4);
             this.richTextBoxMessage.Name = "richTextBoxMessage";
+            this.richTextBoxMessage.ReadOnly = true;
             this.richTextBoxMessage.Size = new System.Drawing.Size(542, 73);
             this.richTextBoxMessage.TabIndex = 0;
             this.richTextBoxMessage.Text = "";
-            // 
-            // labelDataBaseName
-            // 
-            this.labelDataBaseName.AutoSize = true;
-            this.labelDataBaseName.Location = new System.Drawing.Point(28, 127);
-            this.labelDataBaseName.Name = "labelDataBaseName";
-            this.labelDataBaseName.Size = new System.Drawing.Size(0, 18);
-            this.labelDataBaseName.TabIndex = 4;
             // 
             // Sender
             // 

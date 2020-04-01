@@ -32,12 +32,12 @@ namespace AccessTransferServer
             server.SetReceiveMessage();
             if (server.connect && server.receiveMessage)
             {
-                richTextBox.AppendText("\r\n" + "开始监听:" + "\r\n");
+                richTextBox.Text = richTextBox.Text.Insert(0, "\r\n" + "开始监听:" + "\r\n");
                 server.Start();
             }
             else
             {
-                richTextBox.AppendText("\r\n" + "结束监听:" + "\r\n");
+                richTextBox.Text = richTextBox.Text.Insert(0, "\r\n" + "结束监听:" + "\r\n");
             }
         }
 
@@ -46,9 +46,9 @@ namespace AccessTransferServer
             string text = server.ShowMessage();
             if (text != "")
             {
-                richTextBox.AppendText("\r\n" + text);
+                richTextBox.Text = richTextBox.Text.Insert(0, "\r\n" + text);
             }
-            richTextBoxConnectionPool.Text = server.CheckConnection();
+            richTextBoxConnectionPool.Text = richTextBoxConnectionPool.Text = server.CheckConnection();
         }
 
         private void Close(object sender, FormClosingEventArgs e)
