@@ -20,7 +20,7 @@ namespace Lib.DataTransfer
         private int _port;
         private int _interval;
         private string _clientName;
-        private List<string> _currentState;
+        private List<string> _currentState = new List<string>();
 
         public ProcessPattern processPattern;
         public AccessConnection accessConnection;
@@ -109,41 +109,50 @@ namespace Lib.DataTransfer
                     while (StartToSend)
                     {
                         accessConnection.RefreshData(processPattern);
-                        accessConnection.process.SetProcessPattern(processPattern);
+                        //accessConnection.process.SetProcessPattern(processPattern);
                         accessConnection.data.SetInformation(_clientName);
                         if (accessConnection.data.recordCount != 0)
                         {
-                            byte[] sendMessageBytes = accessConnection.data.SendData();
-                            clientSock.Send(sendMessageBytes);
-                            for (int i = 0; i < 3; i++)
+                            try
                             {
-                                System.Threading.Thread.Sleep(_interval * 1000);
-                                try
+                                byte[] sendMessageBytes = accessConnection.data.SendData();
+                                clientSock.Send(sendMessageBytes);
+                                for (int i = 0; i < 3; i++)
                                 {
-                                    byte[] messageBytes = new byte[100 * 1024];
-                                    clientSock.Receive(messageBytes);
-                                    string message = Encoding.UTF8.GetString(messageBytes);
-                                    ResponseMessage response = ResponseMessage.Deserialize(message);
-                                    if (response.Length == accessConnection.data.recordCount)
+                                    System.Threading.Thread.Sleep(_interval * 1000);
+                                    try
                                     {
-                                        _currentState.Add(response.Time.ToString() + "|成功发送消息");
-                                        accessConnection.ChangeTimeStamp();
-                                        break;
-                                    }                                     
-                                }
-                                catch
-                                {
-                                    if (i == 3)
-                                    {
-                                        _currentState.Add("发送失败超过3次, 主动与服务端断开连接");
-                                        throw new Exception("未收到返回确认");
+                                        byte[] messageBytes = new byte[100 * 1024];
+                                        clientSock.Receive(messageBytes);
+                                        string message = Encoding.UTF8.GetString(messageBytes);
+                                        ResponseMessage response = ResponseMessage.Deserialize(message);
+                                        if (response.Length == accessConnection.data.recordCount)
+                                        {
+                                            _currentState.Add(response.Time.ToString() + "|成功发送消息");
+                                            accessConnection.ChangeTimeStamp();
+                                            break;
+                                        }
                                     }
-                                    else 
+                                    catch
                                     {
-                                        _currentState.Add(DateTime.Now.ToString() + "|发送消息失败, 进行第" + (i + 1).ToString() + "次重试");
-                                        continue;
-                                    }               
-                                };
+                                        if (i == 3)
+                                        {
+                                            _currentState.Add("发送失败超过3次, 主动与服务端断开连接");
+                                            throw new Exception("未收到返回确认");
+                                        }
+                                        else
+                                        {
+                                            _currentState.Add(DateTime.Now.ToString() + "|发送消息失败, 进行第" + (i + 1).ToString() + "次重试");
+                                            continue;
+                                        }
+                                    };
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                _currentState.Add("服务端断连,请检查");
+                                ServerConntected = false;
+                                StartToSend = false;
                             }
                         }
                         else
@@ -154,7 +163,7 @@ namespace Lib.DataTransfer
                 }
                 catch
                 {
-                    ServerConntected = false;
+                    _currentState.Add("数据库读取出错,请检查");
                     StartToSend = false;
                 }
             }

@@ -17,6 +17,15 @@ namespace Lib.DataBase.Model
 
         public string clientName;
 
+        public DateTime OnOffRecordTime;
+        public DateTime TmpAndMoistDataTime;
+
+        public DataWrapper(DateTime onOffRecordTime, DateTime tmpAndMoistDataTime) 
+        {
+            OnOffRecordTime = onOffRecordTime;
+            TmpAndMoistDataTime = tmpAndMoistDataTime;
+        }
+
         public void SetInformation(string Name) 
         {
             clientName = Name;
@@ -38,6 +47,7 @@ namespace Lib.DataBase.Model
         {
             //TODO:数据是否正确检查
             _onOffRecord = onOffRecord;
+            OnOffRecordTime = (DateTime)onOffRecord.Rows[0][0];
             return true;
         }
 
@@ -45,6 +55,7 @@ namespace Lib.DataBase.Model
         {
             //TODO:数据是否正确检查
             _tmpAndMoistData = tmpAndMoistData;
+            TmpAndMoistDataTime = (DateTime)tmpAndMoistData.Rows[0][0];
             return true;
         }
 

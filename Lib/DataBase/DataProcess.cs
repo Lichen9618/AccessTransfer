@@ -22,39 +22,47 @@ namespace Lib.DataBase
         public DataTable Process(DataTable dataTable)
         {
             DataTable result = dataTable.Clone();
+            dataTable.DefaultView.Sort = "MCGS_Time DESC";
+            dataTable = dataTable.DefaultView.ToTable();
             if (dataTable.Rows.Count == 0)
             {
                 return dataTable;
             }
             DataRow newRow = result.NewRow();
-            //TODO: 确保时间对表重新进行排序
             foreach (DataColumn column in dataTable.Columns)
             {
-                if (ConfigurationManager.AppSettings[column.ColumnName] == "T")
+                try
                 {
-                    newRow[column.ColumnName] = dataTable.Rows[0][column.ColumnName];
-                }
-                else if(ConfigurationManager.AppSettings[column.ColumnName] == "S")
-                {
-                    newRow[column.ColumnName] = dataTable.Rows[0][column.ColumnName];
-                }
-                else
-                {
-                    switch (_processPattern)
-                    {
-                        case ProcessPattern.Max:
-                            newRow[column.ColumnName] = MaxProcess(column);
-                            break;
-                        case ProcessPattern.Min:
-                            newRow[column.ColumnName] = MinProcess(column);
-                            break;
-                        case ProcessPattern.Average:
-                            newRow[column.ColumnName] = AverageProcess(column);
-                            break;
-                        case ProcessPattern.Latest:
-                            newRow[column.ColumnName] = LatestProcess(column);
-                            break;
+                    if (ConfigurationManager.AppSettings[column.ColumnName] == "T")
+                    {                       
+                        newRow[column.ColumnName] = dataTable.Rows[0][column.ColumnName];
                     }
+                    else if (ConfigurationManager.AppSettings[column.ColumnName] == "S")
+                    {
+                        newRow[column.ColumnName] = dataTable.Rows[0][column.ColumnName];
+                    }
+                    else
+                    {
+                        switch (_processPattern)
+                        {
+                            case ProcessPattern.Max:
+                                newRow[column.ColumnName] = MaxProcess(column);
+                                break;
+                            case ProcessPattern.Min:
+                                newRow[column.ColumnName] = MinProcess(column);
+                                break;
+                            case ProcessPattern.Average:
+                                newRow[column.ColumnName] = AverageProcess(column);
+                                break;
+                            case ProcessPattern.Latest:
+                                newRow[column.ColumnName] = LatestProcess(column);
+                                break;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw e;
                 }
             }
             result.Rows.Add(newRow);

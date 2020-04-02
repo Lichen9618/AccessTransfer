@@ -16,7 +16,6 @@ namespace Lib.DataBase
         private Configuration configuration;
         private OleDbConnection dataBaseConnection;
         private ConnectionStringSettings mySettings;
-        private DateTime timeStamp;
         private bool running = false;
 
         public bool IsConnected = false;
@@ -47,10 +46,12 @@ namespace Lib.DataBase
             }
             else
             {
-                data = new DataWrapper();
                 try
                 {
                     configuration = ConfigurationManager.OpenExeConfiguration(file);
+                    DateTime onOffRecordTime = Convert.ToDateTime(configuration.AppSettings.Settings["OnOffRecordTime"].Value);
+                    DateTime tmpAndMoistTime = Convert.ToDateTime(configuration.AppSettings.Settings["TmpAndMoistTime"].Value);
+                    data = new DataWrapper(onOffRecordTime, tmpAndMoistTime);
                     if (configuration.ConnectionStrings.ConnectionStrings[connectionName] != null)
                     {
                         _dataBasePath = SetDataBasePath
@@ -113,8 +114,6 @@ namespace Lib.DataBase
             process = new DataProcess(pattern);
             if (running == false)
             {
-                string time = configuration.AppSettings.Settings["AccessTime"].Value;
-                timeStamp = Convert.ToDateTime(time);
                 running = !running;
             }
             //if (queryAlarmInfo() && queryOnOffRecord() && queryTmpAndMoist())
@@ -133,8 +132,8 @@ namespace Lib.DataBase
         {
             try
             {
-                timeStamp = DateTime.Now;
-                configuration.AppSettings.Settings["AccessTime"].Value = timeStamp.ToString("yyyy-MM-dd hh:mm:ss");
+                configuration.AppSettings.Settings["OnOffRecordTime"].Value = data.OnOffRecordTime.ToString("yyyy-MM-dd hh:mm:ss");
+                configuration.AppSettings.Settings["TmpAndMoistTime"].Value = data.TmpAndMoistDataTime.ToString("yyyy-MM-dd hh:mm:ss");
                 configuration.Save();
             }
             catch (Exception e)
@@ -171,7 +170,7 @@ namespace Lib.DataBase
             {
                 //TODO: 表名通过配置文件配置
                 string queryString = "SELECT * FROM 开关量存盘_MCGS";
-                string timeCondition = getTimeCondition("MCGS_Time");
+                string timeCondition = getOnOffRecordTimeCondition("MCGS_Time");
                 queryString += timeCondition;
                 OleDbDataAdapter inst = new OleDbDataAdapter(queryString, dataBaseConnection);
                 DataSet ds = new DataSet();
@@ -191,7 +190,7 @@ namespace Lib.DataBase
             {
                 //TODO: 表名通过配置文件配置
                 string queryString = "SELECT * FROM 温湿度数据_MCGS";
-                string timeCondition = getTimeCondition("MCGS_Time");
+                string timeCondition = getTmpAndMoistDataTimeCondition("MCGS_Time");
                 queryString += timeCondition;
                 OleDbDataAdapter inst = new OleDbDataAdapter(queryString, dataBaseConnection);
                 DataSet ds = new DataSet();
@@ -205,13 +204,17 @@ namespace Lib.DataBase
             return true;
         }
 
-        private string getTimeCondition(string keyWord) 
+        private string getOnOffRecordTimeCondition(string keyWord) 
         {
-            if (timeStamp == null) 
-            {
-                return null;
-            }
-            string result = " where " + keyWord + " > " + "#" + timeStamp.ToString("yyyy-MM-dd hh:mm:ss") + "#";  
+            DateTime onOffRecordTime = Convert.ToDateTime(configuration.AppSettings.Settings["OnOffRecordTime"].Value);
+            string result = " where " + keyWord + " > " + "#" + onOffRecordTime.ToString("yyyy-MM-dd hh:mm:ss") + "#";  
+            return result;
+        }
+
+        private string getTmpAndMoistDataTimeCondition(string keyWord)
+        {
+            DateTime tmpAndMoistTime = Convert.ToDateTime(configuration.AppSettings.Settings["TmpAndMoistTime"].Value);
+            string result = " where " + keyWord + " > " + "#" + tmpAndMoistTime.ToString("yyyy-MM-dd hh:mm:ss") + "#";
             return result;
         }
 
