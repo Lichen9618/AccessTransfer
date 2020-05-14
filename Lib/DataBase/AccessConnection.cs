@@ -22,7 +22,7 @@ namespace Lib.DataBase
         public DataWrapper data;
         public DataProcess process;
 
-        public static AccessConnection GetInsantance(string file = "") 
+        public static AccessConnection GetInstance(string file = "") 
         {
             if (instance == null)
             {
@@ -38,7 +38,7 @@ namespace Lib.DataBase
 
         }
 
-        public AccessConnection(string file)
+        private AccessConnection(string file)
         {
             if (file == "")
             {
@@ -132,8 +132,8 @@ namespace Lib.DataBase
         {
             try
             {
-                configuration.AppSettings.Settings["OnOffRecordTime"].Value = data.OnOffRecordTime.ToString("yyyy-MM-dd hh:mm:ss");
-                configuration.AppSettings.Settings["TmpAndMoistTime"].Value = data.TmpAndMoistDataTime.ToString("yyyy-MM-dd hh:mm:ss");
+                configuration.AppSettings.Settings["OnOffRecordTime"].Value = data.OnOffRecordTime.ToString("yyyy-MM-dd HH:mm:ss");
+                configuration.AppSettings.Settings["TmpAndMoistTime"].Value = data.TmpAndMoistDataTime.ToString("yyyy-MM-dd HH:mm:ss");
                 configuration.Save();
             }
             catch (Exception e)
@@ -207,14 +207,14 @@ namespace Lib.DataBase
         private string getOnOffRecordTimeCondition(string keyWord) 
         {
             DateTime onOffRecordTime = Convert.ToDateTime(configuration.AppSettings.Settings["OnOffRecordTime"].Value);
-            string result = " where " + keyWord + " > " + "#" + onOffRecordTime.ToString("yyyy-MM-dd hh:mm:ss") + "#";  
+            string result = " where " + keyWord + " > " + "#" + onOffRecordTime.ToString("yyyy-MM-dd HH:mm:ss") + "#";  
             return result;
         }
 
         private string getTmpAndMoistDataTimeCondition(string keyWord)
         {
             DateTime tmpAndMoistTime = Convert.ToDateTime(configuration.AppSettings.Settings["TmpAndMoistTime"].Value);
-            string result = " where " + keyWord + " > " + "#" + tmpAndMoistTime.ToString("yyyy-MM-dd hh:mm:ss") + "#";
+            string result = " where " + keyWord + " > " + "#" + tmpAndMoistTime.ToString("yyyy-MM-dd HH:mm:ss") + "#";
             return result;
         }
 

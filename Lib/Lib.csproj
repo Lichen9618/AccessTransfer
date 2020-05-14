@@ -74,6 +74,7 @@
     <Compile Include="DataTransfer\Client.cs" />
     <Compile Include="DataTransfer\utils\JsonHelper.cs" />
     <Compile Include="DataTransfer\Server.cs" />
+    <Compile Include="DataTransfer\utils\NetworkHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

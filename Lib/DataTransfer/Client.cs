@@ -1,5 +1,6 @@
 ﻿using Lib.DataBase;
 using Lib.DataBase.Model;
+using Lib.DataTransfer.utils;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -21,12 +22,14 @@ namespace Lib.DataTransfer
         private int _interval;
         private string _clientName;
         private List<string> _currentState = new List<string>();
+        
 
         public ProcessPattern processPattern;
         public AccessConnection accessConnection;
         public DataProcess dataProcess;
         public bool ServerConntected = false;
         public bool StartToSend = false;
+        public NetworkHelper networkHelper;
         Socket clientSock;
         Thread thread;
 
@@ -47,7 +50,9 @@ namespace Lib.DataTransfer
 
         public Client()
         {
-            ConnectServer();            
+            ConnectServer();
+            networkHelper = NetworkHelper.GetInstance();
+            networkHelper.setParameters(_ipAddress, 200, _port);
         }
 
         public string ConnectServer()
@@ -74,6 +79,22 @@ namespace Lib.DataTransfer
                 return e.Message;
             }
             return "连接成功";
+        }
+
+        public string ReconnectServer() 
+        {
+            if (ServerConntected == false) 
+            {
+                if (networkHelper.IfConnected())
+                {
+                    ConnectServer();
+                }
+            }
+            else
+            {
+                return "连接未断开, 无需重连";
+            }
+            return networkHelper.status;
         }
 
 

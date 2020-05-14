@@ -47,16 +47,30 @@ namespace Lib.DataBase.Model
         {
             //TODO:数据是否正确检查
             _onOffRecord = onOffRecord;
-            OnOffRecordTime = (DateTime)onOffRecord.Rows[0][0];
-            return true;
+            if (onOffRecord.Rows.Count == 0)
+            {
+                return false;
+            }
+            else 
+            {
+                OnOffRecordTime = (DateTime)onOffRecord.Rows[0][0];
+                return true;
+            }
         }
 
         public bool SetTmpAndMoistData(DataTable tmpAndMoistData) 
         {
             //TODO:数据是否正确检查
             _tmpAndMoistData = tmpAndMoistData;
-            TmpAndMoistDataTime = (DateTime)tmpAndMoistData.Rows[0][0];
-            return true;
+            if (tmpAndMoistData.Rows.Count == 0)
+            {
+                return false;
+            }
+            else 
+            {
+                TmpAndMoistDataTime = (DateTime)tmpAndMoistData.Rows[0][0];
+                return true;
+            }
         }
 
         public bool IsReady() 

@@ -14,7 +14,9 @@ namespace AccessTransferClient
     {
         private Client client;
         private AccessConnection accessConnection;
+        private bool isReconnect = false;
         System.Timers.Timer timer;
+        System.Timers.Timer reconnectTimer;
         public Sender()
         {
             InitializeComponent();
@@ -30,9 +32,9 @@ namespace AccessTransferClient
                 MessageBox.Show(e.Message);
                 labelServerConnected.Text = "否";
             }
-            accessConnection = AccessConnection.GetInsantance((System.Windows.Forms.Application.ExecutablePath));
+            accessConnection = AccessConnection.GetInstance((System.Windows.Forms.Application.ExecutablePath));
             SetDataBaseConnectionLabel(accessConnection.OpenConnection());
-            TimeStart();
+            MessageTimerStart();
         }
 
         private void buttonStart_Click(object sender, EventArgs e)
@@ -74,7 +76,7 @@ namespace AccessTransferClient
             }
         }
 
-        private void TimeStart()       
+        private void MessageTimerStart()       
         {
             timer = new System.Timers.Timer();
             timer.Enabled = true;
@@ -82,6 +84,7 @@ namespace AccessTransferClient
             timer.Elapsed += new System.Timers.ElapsedEventHandler(FreshMessage);
             timer.Start();
         }
+
 
         private void FreshMessage(object source, ElapsedEventArgs e)
         {
@@ -231,6 +234,76 @@ namespace AccessTransferClient
             {
                 radioButtonLatest.Checked = true;
             }
+        }
+
+        private void radioButtonAutoRCN_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!isReconnect)
+            {
+                if (textBoxRCInterval.Text == "13") 
+                {
+                    client.ReconnectServer();
+                }
+                textBoxRCInterval.Enabled = false;
+                ReconnectTimerStart();
+                isReconnect = !isReconnect;
+                
+            }
+            else 
+            {
+                textBoxRCInterval.Enabled = true;
+                reconnectTimer.Stop();
+            }
+        }
+
+        private void ReconnectTimerStart()
+        {
+            if (!CheckNumber()) 
+            {
+                return;
+            }
+            reconnectTimer = new System.Timers.Timer();
+            reconnectTimer.Enabled = true;
+            reconnectTimer.Interval = int.Parse(textBoxRCInterval.Text) * 1000;
+            reconnectTimer.Elapsed += new System.Timers.ElapsedEventHandler(Reconnect);
+            reconnectTimer.Start();
+        }
+
+        public void Reconnect(object source, ElapsedEventArgs e)
+        {
+            if (client.ServerConntected != true)
+            {
+                string result = client.ReconnectServer();
+                richTextBoxMessage.Text = richTextBoxMessage.Text.Insert(0, "\r\n" + result + "\r\n");                
+            }        
+        }
+
+        public bool CheckNumber()
+        {
+            int temp;
+            if (int.TryParse(textBoxRCInterval.Text, out temp))
+            {
+                if (temp <= 0)
+                {
+                    MessageBox.Show("请输入大于零的时间间隔");
+                    return CheckFailed();
+                }
+                else 
+                {
+                    return true;
+                }
+            }
+            else 
+            {
+                MessageBox.Show("请输入数字");
+                return CheckFailed();
+            }                    
+        }
+
+        public bool CheckFailed() 
+        {
+            radioButtonAutoRCN.Checked = true;
+            return false;
         }
     }
 }
