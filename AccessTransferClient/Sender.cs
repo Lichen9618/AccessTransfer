@@ -15,6 +15,7 @@ namespace AccessTransferClient
         private Client client;
         private AccessConnection accessConnection;
         private bool isReconnect = false;
+        private bool isRun = false;
         System.Timers.Timer timer;
         System.Timers.Timer reconnectTimer;
         public Sender()
@@ -52,18 +53,22 @@ namespace AccessTransferClient
                     {
                         MessageBox.Show("请输入间隔时间");
                         return;
-                    }                    
+                    }
+                    if (!ReconnectTimerStart()) return;
                     client.SetAcceesConnection(accessConnection);
                     GetProcessPattern();
                     client.Start();                    
                     SetTheButton(false);
-                    timer.Start();
+                    timer.Start();                    
+                    isRun = true;
                     return;
                 }
                 else 
                 {
                     client.End();
                     timer.Stop();
+                    reconnectTimer.Stop();
+                    isRun = false;
                     SetTheButton(true);
                 }
             }
@@ -71,6 +76,7 @@ namespace AccessTransferClient
             {
                 client.End();
                 timer.Stop();
+                isRun = false;
                 SetTheButton(true);
                 MessageBox.Show("无法连接至服务端,请检查");
             }
@@ -109,6 +115,9 @@ namespace AccessTransferClient
             buttonDataBaseChoose.Enabled = state;
             textBoxInterval.Enabled = state;
             buttonConnectToServer.Enabled = state;
+            radioButtonAutoRC.Enabled = state;
+            radioButtonAutoRCN.Enabled = state;
+            textBoxRCInterval.Enabled = state;
         }
 
         private void Close(object sender, FormClosingEventArgs e)
@@ -236,44 +245,28 @@ namespace AccessTransferClient
             }
         }
 
-        private void radioButtonAutoRCN_CheckedChanged(object sender, EventArgs e)
+        private bool ReconnectTimerStart()
         {
-            if (!isReconnect)
+            if (radioButtonAutoRC.Checked) 
             {
-                if (textBoxRCInterval.Text == "13") 
+                if (!CheckNumber())
                 {
-                    client.ReconnectServer();
+                    return false;
                 }
-                textBoxRCInterval.Enabled = false;
-                ReconnectTimerStart();
-                isReconnect = !isReconnect;
-                
+                reconnectTimer = new System.Timers.Timer();
+                reconnectTimer.Enabled = true;
+                reconnectTimer.Interval = int.Parse(textBoxRCInterval.Text) * 1000;
+                reconnectTimer.Elapsed += new System.Timers.ElapsedEventHandler(Reconnect);
+                reconnectTimer.Start();
             }
-            else 
-            {
-                textBoxRCInterval.Enabled = true;
-                reconnectTimer.Stop();
-            }
-        }
-
-        private void ReconnectTimerStart()
-        {
-            if (!CheckNumber()) 
-            {
-                return;
-            }
-            reconnectTimer = new System.Timers.Timer();
-            reconnectTimer.Enabled = true;
-            reconnectTimer.Interval = int.Parse(textBoxRCInterval.Text) * 1000;
-            reconnectTimer.Elapsed += new System.Timers.ElapsedEventHandler(Reconnect);
-            reconnectTimer.Start();
+            return true;
         }
 
         public void Reconnect(object source, ElapsedEventArgs e)
         {
             if (client.ServerConntected != true)
             {
-                string result = client.ReconnectServer();
+                string result = client.ReconnectServer(isRun);
                 richTextBoxMessage.Text = richTextBoxMessage.Text.Insert(0, "\r\n" + result + "\r\n");                
             }        
         }

@@ -81,13 +81,14 @@ namespace Lib.DataTransfer
             return "连接成功";
         }
 
-        public string ReconnectServer() 
+        public string ReconnectServer(bool isRun) 
         {
             if (ServerConntected == false) 
             {
                 if (networkHelper.IfConnected())
                 {
                     ConnectServer();
+                    if (isRun) Start();
                 }
             }
             else
